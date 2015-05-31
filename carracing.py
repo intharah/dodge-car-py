@@ -8,6 +8,25 @@ background = pygame.Surface(screen.get_size())
 background = background.convert()
 background.fill((250, 250, 250))
 
+# This is a list of 'sprites.' Each block in the program is
+# added to this list.
+# The list is managed by a class called 'Group.'
+block_list = pygame.sprite.Group()
+ 
+# This is a list of every sprite.
+# All blocks and the player block as well.
+all_sprites_list = pygame.sprite.Group()
+
+class PadSprite(pygame.sprite.Sprite):
+    def __init__(self,position):
+        # Call the parent class (Sprite) constructor
+        pygame.sprite.Sprite.__init__(self)
+        # Load the image
+        self.image = pygame.image.load("pad_normal.png")
+        self.position = position
+        self.rect = self.image.get_rect()
+        self.rect.center = self.position
+    
 class CarSprite(pygame.sprite.Sprite):
     MAX_FORWARD_SPEED = 10
     MAX_REVERSE_SPEED = 10
@@ -41,6 +60,18 @@ rect = screen.get_rect()
 car = CarSprite('car.png', rect.center)
 car_group = pygame.sprite.RenderPlain(car)
 
+all_sprites_list.add(car_group)
+
+# CREATE PADS
+pads = [
+    PadSprite((200, 200)),
+    PadSprite((800, 200)),
+    PadSprite((200, 600)),
+    PadSprite((800, 600)),
+]
+pad_group = pygame.sprite.RenderPlain(*pads)
+all_sprites_list.add(*pads)
+
 while 1:
     # USER INPUT
     deltat = clock.tick(30)
@@ -55,5 +86,9 @@ while 1:
     # RENDERING
     screen.fill((0,0,0))
     car_group.update(deltat)
-    car_group.draw(screen)
+    # Draw all the sprites
+    all_sprites_list.draw(screen)
+    #collisions = pygame.sprite.spritecollide(car_group, pad_group, True)
+    #pad_group.update(collisions)
+    #pad_group.draw(screen)
     pygame.display.flip()
