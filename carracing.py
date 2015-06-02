@@ -1,8 +1,13 @@
 # INTIALISATION
 import pygame, math, sys
 from pygame.locals import *
+from pyscope import pyscope
 
-screen = pygame.display.set_mode((1024, 768))
+scope = pyscope()
+print scope
+screen = scope.screen
+print screen
+#screen = pygame.display.set_mode((1024, 768))
 clock = pygame.time.Clock()
 background = pygame.Surface(screen.get_size())
 background = background.convert()
