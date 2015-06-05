@@ -1,14 +1,19 @@
 # INTIALISATION
 import pygame, math, sys
 from pygame.locals import *
+from pyscope import pyscope
 
 screen = pygame.display.set_mode((640, 480))
+#scope = pyscope()
+#print scope
+#screen = scope.screen
+#print screen
 clock = pygame.time.Clock()
 background = pygame.Surface(screen.get_size())
 background = background.convert()
 background.fill((250, 250, 250))
 background_img = pygame.image.load("grass.png").convert()
-pause = False
+crash = False
 
 # This is a list of 'sprites.' Each block in the program is
 # added to this list.
@@ -21,7 +26,7 @@ all_sprites_list = pygame.sprite.Group()
 
 
 class PadSprite(pygame.sprite.Sprite):
-    normal = pygame.image.load("pad_normal.png")
+    normal = pygame.image.load("car.png")
     hit = pygame.image.load("pad_hit.png")
     def __init__(self,number,position):
         # Call the parent class (Sprite) constructor
@@ -79,54 +84,42 @@ pads = [
     PadSprite(1,(100, 100)),
     PadSprite(2,(300, 100))
 ]
-#current_pad_number = 0
 pad_group = pygame.sprite.RenderPlain(*pads)
 all_sprites_list.add(*pads)
 
 while 1:
-    while pause == False:
-        # USER INPUT
-        deltat = clock.tick(30)
-        for event in pygame.event.get():
-            if not hasattr(event, 'key'): continue
-            down = event.type == KEYDOWN
+    # USER INPUT
+    deltat = clock.tick(30)
+    for event in pygame.event.get():
+        if not hasattr(event, 'key'): continue
+        down = event.type == KEYDOWN
+        if crash == False:
             if event.key == K_RIGHT: car.k_right = down * -5
             elif event.key == K_LEFT: car.k_left = down * 5
             elif event.key == K_UP: car.k_up = down * 2
             elif event.key == K_DOWN: car.k_down = down * -2
             elif event.key == K_SPACE: car.k_space = down * 0
-            elif event.key == K_ESCAPE: pygame.quit()
-        # RENDERING
-        screen.blit(background_img,(0,0))
-        pad_group.clear(screen, background)
-        car_group.clear(screen, background)
-        car_group.update(deltat)
-        # CHECK IF CAR IS LEAVING SCREEN
-        if car.rect.right>1024:
-            car.rect.right = 1024
-        elif car.rect.left<0:
-            car.rect.left = 0
-        elif car.rect.bottom>768:
-            car.rect.bottom = 768
-        elif car.rect.top<0:
-            car.rect.top = 0
-        # DRAW ALL SPRITES
-        all_sprites_list.draw(screen)
-        pads = pygame.sprite.spritecollide(car, pad_group, False)
-        #if pads:
-        #    pad = pads[0]
-        #    if pad.number == current_pad_number + 1:
-        #        pad.image = pad.hit
-        #        current_pad_number += 1
-        #elif current_pad_number == 4:
-        #    for pad in pad_group.sprites(): pad.image = pad.normal
-        #    current_pad_number = 0
-        if pads:
-            car.src_image = car.car_hit
-            pause = True
-            #car.speed = 0
-            #car.k_left = car.k_right = car.k_down = car.k_up = 0
-        pygame.display.flip()
-
-    if pause == True:
-        print("Game over")
+        if event.key == K_ESCAPE: pygame.quit()
+    # RENDERING
+    screen.blit(background_img,(0,0))
+    pad_group.clear(screen, background)
+    car_group.clear(screen, background)
+    car_group.update(deltat)
+    # CHECK IF CAR IS LEAVING SCREEN
+    if car.rect.right>640:
+        car.rect.right = 640
+    elif car.rect.left<0:
+        car.rect.left = 0
+    elif car.rect.bottom>480:
+        car.rect.bottom = 480
+    elif car.rect.top<0:
+        car.rect.top = 0
+    # DRAW ALL SPRITES
+    all_sprites_list.draw(screen)
+    pads = pygame.sprite.spritecollide(car, pad_group, False)
+    if pads:
+        car.src_image = car.car_hit
+        car.speed = 0
+        car.k_left = car.k_right = car.k_down = car.k_up = 0
+        crash = True
+    pygame.display.flip()
