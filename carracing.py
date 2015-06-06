@@ -3,14 +3,19 @@ import pygame, math, sys
 from pygame.locals import *
 from pyscope import pyscope
 
+width = 640
+height = 480
 
 if (sys.platform == "darwin"):
-    screen = pygame.display.set_mode((640, 480))
+    screen = pygame.display.set_mode((width, height))
 else:
     scope = pyscope()
     screen = scope.screen
+    width = screen.get_size()[0]
+    height = screen.get_size()[1]
 clock = pygame.time.Clock()
 background = pygame.Surface(screen.get_size())
+print screen.get_size()[0]
 background = background.convert()
 background.fill((250, 250, 250))
 background_img = pygame.image.load("grass.png").convert()
@@ -88,6 +93,11 @@ pads = [
 pad_group = pygame.sprite.RenderPlain(*pads)
 all_sprites_list.add(*pads)
 
+
+pygame.font.init()
+basicfont = pygame.font.Font('data/coders_crux/coders_crux.ttf', 20)
+
+
 while 1:
     # USER INPUT
     deltat = clock.tick(30)
@@ -105,14 +115,23 @@ while 1:
     screen.blit(background_img,(0,0))
     pad_group.clear(screen, background)
     car_group.clear(screen, background)
+    
+    # display fps
+    text = basicfont.render("%d fps" % int(clock.get_fps()), True, (255, 0, 0), (255, 255, 255))
+    textrect = text.get_rect()
+    textrect.centerx = text.get_rect().width /2
+    textrect.centery = 10
+    screen.fill((255, 255, 255))
+    screen.blit(text, textrect)
+
     car_group.update(deltat)
     # CHECK IF CAR IS LEAVING SCREEN
-    if car.rect.right>640:
-        car.rect.right = 640
+    if car.rect.right>width:
+        car.rect.right = width
     elif car.rect.left<0:
         car.rect.left = 0
-    elif car.rect.bottom>480:
-        car.rect.bottom = 480
+    elif car.rect.bottom>height:
+        car.rect.bottom = height
     elif car.rect.top<0:
         car.rect.top = 0
     # DRAW ALL SPRITES
