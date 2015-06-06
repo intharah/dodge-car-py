@@ -3,11 +3,12 @@ import pygame, math, sys
 from pygame.locals import *
 from pyscope import pyscope
 
-screen = pygame.display.set_mode((640, 480))
-#scope = pyscope()
-#print scope
-#screen = scope.screen
-#print screen
+
+if (sys.platform == "darwin"):
+    screen = pygame.display.set_mode((640, 480))
+else:
+    scope = pyscope()
+    screen = scope.screen
 clock = pygame.time.Clock()
 background = pygame.Surface(screen.get_size())
 background = background.convert()
