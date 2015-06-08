@@ -111,7 +111,7 @@ while 1:
     # USER INPUT
     deltat = clock.tick(30)
     for event in pygame.event.get():
-        if event.type == USEREVENT+1:
+        if (event.type == USEREVENT+1) and (crash == False):
             time -= 1
         if not hasattr(event, 'key'): continue
         down = event.type == KEYDOWN
