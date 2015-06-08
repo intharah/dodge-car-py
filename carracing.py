@@ -77,6 +77,7 @@ class CarSprite(pygame.sprite.Sprite):
         self.image = pygame.transform.rotate(self.src_image, self.direction)
         self.rect = self.image.get_rect()
         self.rect.center = self.position
+        #print self.position
             
 # CREATE A CAR AND RUN
 rect = screen.get_rect()
@@ -126,14 +127,16 @@ while 1:
 
     car_group.update(deltat)
     # CHECK IF CAR IS LEAVING SCREEN
-    if car.rect.right>width:
-        car.rect.right = width
-    elif car.rect.left<0:
-        car.rect.left = 0
-    elif car.rect.bottom>height:
-        car.rect.bottom = height
-    elif car.rect.top<0:
-        car.rect.top = 0
+    if car.position[0] <0:
+        car.position = (width, car.position[1])
+    elif car.position[0] > width:
+        car.position = (0, car.position[1])
+    if car.position[1] <0:
+        car.position = (car.position[0], height)
+    elif car.position[1] > height:
+        car.position = (car.position[0], 0)
+
+
     # DRAW ALL SPRITES
     all_sprites_list.draw(screen)
     pads = pygame.sprite.spritecollide(car, pad_group, False)
