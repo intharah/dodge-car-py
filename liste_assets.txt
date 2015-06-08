@@ -1,0 +1,50 @@
+Idée de base: auto tamponneuses multi-joueur
+
+Idées de titre : 
+Boomper Cars
+the art of Driving
+Bumper Cars from Outer Space (genre https://talkabtmovies.files.wordpress.com/2010/11/it_came_from_outer_space_1953_poster_03.jpg )
+Michael Bay's Explosive Bumper Cars (cf https://www.youtube.com/watch?v=v7ssUivM-eM )
+Bumper cars Battle / Bumper Cars Arena
+Bumper Cars Revenge III
+
+
+3 voiture démarrent avec une position aléatoire sur le niveau. Elles ont toutes les 3 une barre de vie. Il ne peut en rester qu'une. La barre de vie diminue à chaque collision. 
+Le temps est limité, comme dans une partie de versus fighting, le gagnant est celui à qui il reste le plus de vie à la fin. Lorsqu'on meurt, la voiture explose.
+
+En plus des voitures, on peut prévoir : 
+des armes qui apparaissent à des positions aléatoires pendant la partie
+turbo
+gun (3 coups)
+colle
+trou ACME (on tombe dedans et on meurt direct + cri de Willem)
+sur le niveau, on peut placer aléatoirement
+flaque d'huile
+bumper de flipper
+
+À l'écran, on doit afficher : 
+les 3 barres de vie
+le score
+le temps restant
+l'arme active
+
+Comme l'écran est plutôt 16/9, on pourrait afficher ça verticalement sur les côtés, plutôt qu'horizontalement en haut et en bas de l'écran.
+
+Chaque borne a une couleur de boutons (L et R sur les côtés de la borne et éclairés par LED). Ce qui serait cool, c'est que la couleur de la voiture soit d'office celle de la borne.
+
+Comme l'écran est petit, on peut faire un écran qui boucle.
+
+
+sticker casquette fond transparent
+
+Informations sur les assets(taille en px): 
+
+3 Véhicules distincts : 34x56
+Fond(Menu + Jeu) : 480x272 (résolution des écrans 4,3”)
+4 Armes : 32x32
+2 Objets (flaque d’huile et bumper de flipper) : 56x56
+1 sprite pour l’explosion de la voiture: 56x56
+
+
+
+
