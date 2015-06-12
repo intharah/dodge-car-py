@@ -121,10 +121,14 @@ while 1:
             elif event.key == K_UP: car.k_up = down * 2
             elif event.key == K_DOWN: car.k_down = down * -2
             elif event.key == K_SPACE: car.k_left = car.k_right = car.k_down = car.k_up = 0
+        elif crash == True and event.key == K_r:        
+            pygame.quit()
+            pygame.display.quit()
+            subprocess.call(["python", "carracing.py"])
         if event.key == K_ESCAPE:
             pygame.quit()
             pygame.display.quit()
-            subprocess.call(["python", "menu.py"])
+            subprocess.call(["python", "menu.py"])          
     if time == 0:
         print "TIME OVER"
 
