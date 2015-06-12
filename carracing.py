@@ -1,5 +1,5 @@
 # INTIALISATION
-import pygame, math, sys
+import pygame, math, sys, subprocess
 from pygame.locals import *
 from pyscope import pyscope
 
@@ -13,7 +13,7 @@ lifeP3 = 100
 time = 99
 pygame.time.set_timer(USEREVENT+1, 1000)
 
-if (sys.platform == "darwin"):
+if (sys.platform == "darwin") or (sys.platform == "win32"):
     screen = pygame.display.set_mode((width, height))
 else:
     scope = pyscope()
@@ -120,9 +120,11 @@ while 1:
             elif event.key == K_LEFT: car.k_left = down * 5
             elif event.key == K_UP: car.k_up = down * 2
             elif event.key == K_DOWN: car.k_down = down * -2
-            elif event.key == K_SPACE: car.k_space = down * 0
-        if event.key == K_ESCAPE: pygame.quit()
-
+            elif event.key == K_SPACE: car.k_left = car.k_right = car.k_down = car.k_up = 0
+        if event.key == K_ESCAPE:
+            pygame.quit()
+            pygame.display.quit()
+            subprocess.call(["python", "menu.py"])
     if time == 0:
         print "TIME OVER"
 

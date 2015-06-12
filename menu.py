@@ -9,16 +9,21 @@ README on the bottom of document.
 @font: from http://www.dafont.com/coders-crux.font
       more abuot license you can find in data/coders-crux/license.txt
 '''
-import subprocess
-import pygame
+ 
+import pygame, math, sys, subprocess
 from pygame.locals import *
 from pyscope import pyscope
 
-screen = pygame.display.set_mode((640, 480))
-#scope = pyscope()
-#print scope
-#screen = scope.screen
-#print screen
+width = 640
+height = 480
+
+if (sys.platform == "darwin") or (sys.platform == "win32"):
+    screen = pygame.display.set_mode((width, height))
+else:
+    scope = pyscope()
+    screen = scope.screen
+    width = screen.get_size()[0]
+    height = screen.get_size()[1]
 
 if not pygame.display.get_init():
     pygame.display.init()
@@ -157,14 +162,15 @@ if __name__ == "__main__":
                     menu.draw(1) #here is the Menu class function
                 if event.key == K_RETURN:
                     if menu.get_position() == 2:#here is the Menu class function
+                        pygame.quit()
                         pygame.display.quit()
                         sys.exit()
                     elif menu.get_position() == 0:#start the game here
-                        subprocess.call(["python", "carracing.py"])
+                        pygame.quit()
                         pygame.display.quit()
-                        sys.exit()
+                        subprocess.call(["python", "carracing.py"])
                 if event.key == K_ESCAPE:
-                    pygame.display.quit()
+                    pygame.quit()
                     sys.exit()
                 pygame.display.update()
             elif event.type == QUIT:
