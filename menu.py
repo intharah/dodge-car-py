@@ -18,10 +18,10 @@ width = 640
 height = 480
 
 if (sys.platform == "darwin") or (sys.platform == "win32"):
-    screen = pygame.display.set_mode((width, height))
+    surface = pygame.display.set_mode((width, height)) #0,6671875 and 0,(6) of HD resoultion
 else:
     scope = pyscope()
-    screen = scope.screen
+    surface = scope.screen
     width = screen.get_size()[0]
     height = screen.get_size()[1]
 
@@ -126,7 +126,6 @@ class Menu:
 
 if __name__ == "__main__":
     import sys
-    surface = pygame.display.set_mode((854,480)) #0,6671875 and 0,(6) of HD resoultion
     surface.fill((51,51,51))
     '''First you have to make an object of a *Menu class.
     *init take 2 arguments. List of fields and destination surface.
