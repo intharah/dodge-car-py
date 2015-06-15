@@ -203,7 +203,7 @@ while 1:
     # CHECK IF CAR HAS TAKEN BONUS
     bonus = pygame.sprite.spritecollide(car, bonus_group, False)
     if bonus:
-        car.speed = 20 # Speed up car speed
+        car.speed = car.MAX_FORWARD_SPEED # Speed up car speed
         bonus_group.update(bonus, pygame.image.load("empty.png"))
     if crash == True:
         # Display Game Over
