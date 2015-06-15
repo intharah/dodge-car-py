@@ -31,6 +31,7 @@ if not pygame.display.get_init():
 if not pygame.font.get_init():
     pygame.font.init()
 
+background_img = pygame.image.load("grass.png").convert()
 
 class Menu:
     lista = []
@@ -40,7 +41,7 @@ class Menu:
     font = pygame.font.Font
     dest_surface = pygame.Surface
     ilosc_pol = 0
-    kolor_tla = (51,51,51)
+    kolor_tla = (51,51,51,0)
     kolor_tekstu =  (255, 255, 153)
     kolor_zaznaczenia = (153,102,255)
     pozycja_zaznaczenia = 0
@@ -83,8 +84,9 @@ class Menu:
             if self.pozycja_zaznaczenia == -1:
                 self.pozycja_zaznaczenia = self.ilosc_pol - 1
             self.pozycja_zaznaczenia %= self.ilosc_pol
-        menu = pygame.Surface((self.menu_width, self.menu_height))
-        menu.fill(self.kolor_tla)
+        menu = pygame.Surface((self.menu_width, self.menu_height),pygame.SRCALPHA)
+        #menu.fill(self.kolor_tla)
+        menu.blit(background_img,(0,0))
         zaznaczenie_rect = self.pola[self.pozycja_zaznaczenia].zaznaczenie_rect
         pygame.draw.rect(menu,self.kolor_zaznaczenia,zaznaczenie_rect)
 
@@ -126,7 +128,8 @@ class Menu:
 
 if __name__ == "__main__":
     import sys
-    surface.fill((51,51,51))
+    #surface.fill((51,51,51))
+    surface.blit(background_img,(0,0))
     '''First you have to make an object of a *Menu class.
     *init take 2 arguments. List of fields and destination surface.
     Then you have a 4 configuration options:
