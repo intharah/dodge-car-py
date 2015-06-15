@@ -10,7 +10,16 @@ import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 DEBUG = 1
 
+GPIO.setup(2, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(3, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(4, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(14, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(15, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(27, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(22, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(10, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
 
 
 # read SPI data from MCP3008 chip, 8 possible adc's (0 thru 7)
@@ -101,8 +110,33 @@ while True:
 		print "y:", valy
 
 		last_ready = trim_poty
-	but0 = GPIO.input(4)
-	if but0 == False:
-		print "but0 pressed"
+	bselect = GPIO.input(2)
+	bstart = GPIO.input(3)
+	by = GPIO.input(4)
+	bx = GPIO.input(14)
+	bb = GPIO.input(15)
+	bl = GPIO.input(17)
+	br = GPIO.input(27)
+	ba = GPIO.input(22)
+	bstick = GPIO.input(10)
+
+	if bselect == False:
+		print "select"
+	if bstart == False:
+		print "start"
+	if by == False:
+		print "Y"
+	if bx == False:
+		print "X"
+	if bb == False:
+		print "B"
+	if bl == False:
+		print "L"
+	if br == False:
+		print "R"
+	if ba == False:
+		print "A"
+	if bstick == False:
+		print "stick"
         # hang out and do nothing for a half second
         time.sleep(0.1)
