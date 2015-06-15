@@ -166,7 +166,8 @@ if __name__ == "__main__":
                     if menu.get_position() == 0:#start the game here
                         pygame.quit()
                         pygame.display.quit()
-                        subprocess.call(["python", "carracing.py"])
+                        startMenu = subprocess.Popen([sys.executable, "carracing.py"])
+                        startMenu.communicate()
                 if event.key == K_ESCAPE:
                     pygame.quit()
                     sys.exit()

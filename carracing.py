@@ -1,7 +1,9 @@
 # INTIALISATION
-import pygame, math, sys, subprocess, random
+import pygame, math, sys, subprocess, random, pdb
 from pygame.locals import *
 from pyscope import pyscope
+
+pygame.init()
 
 width = 640
 height = 480
@@ -151,11 +153,16 @@ while 1:
         elif crash == True and event.key == K_r:
             pygame.quit()
             pygame.display.quit()
-            subprocess.call(["python", "carracing.py"])
+            #subprocess.call(["python", "carracing.py"]) #not working on Mac, only Win32
+            restart = subprocess.Popen([sys.executable, "carracing.py"])
+            restart.communicate()
         if event.key == K_ESCAPE:
             pygame.quit()
             pygame.display.quit()
-            subprocess.call(["python", "menu.py"])          
+            # pdb.set_trace() #DEBUG
+            #subprocess.call(["python", "menu.py"]) #not working on Mac, only Win32
+            gotoMenu = subprocess.Popen([sys.executable, "menu.py"])
+            gotoMenu.communicate()
     if time == 0:
         print "TIME OVER"
 
