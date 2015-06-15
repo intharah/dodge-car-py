@@ -37,7 +37,16 @@ block_list = pygame.sprite.Group()
 # All blocks and the player block as well.
 all_sprites_list = pygame.sprite.Group()
 
+class DisplayText:
+    def __init__(self,message,font_type,color,posX,posY,marginX,marginY):
+        self.msg = font_type.render(message, True, color)
+        self.msgRect = self.msg.get_rect()
+        self.msgRect.centerx = posX + marginX
+        self.msgRect.centery = posY + marginY
 
+    def render(self):
+        screen.blit(self.msg, self.msgRect)
+        
 class PadSprite(pygame.sprite.Sprite):
     normal = pygame.image.load("car.png")
     hit = pygame.image.load("pad_hit.png")
@@ -104,6 +113,7 @@ all_sprites_list.add(*pads)
 
 pygame.font.init()
 basicfont = pygame.font.Font('data/coders_crux/coders_crux.ttf', 20)
+mediumfont = pygame.font.Font('data/coders_crux/coders_crux.ttf', 40)
 bigfont = pygame.font.Font('data/coders_crux/coders_crux.ttf', 70)
 
 
@@ -121,7 +131,7 @@ while 1:
             elif event.key == K_UP: car.k_up = down * 2
             elif event.key == K_DOWN: car.k_down = down * -2
             elif event.key == K_SPACE: car.k_left = car.k_right = car.k_down = car.k_up = 0
-        elif crash == True and event.key == K_r:        
+        elif crash == True and event.key == K_r:
             pygame.quit()
             pygame.display.quit()
             subprocess.call(["python", "carracing.py"])
@@ -153,21 +163,13 @@ while 1:
         pygame.draw.rect(screen,(0,0,255), (40, height-10, 10, -int(lifeP3/100.0*height/2)), 0)    
 
     # display fps
-    text = basicfont.render("%d fps" % int(clock.get_fps()), True, (255, 0, 0), (0, 0, 0))
-    textrect = text.get_rect()
-    textrect.centerx = text.get_rect().width /2 + 5
-    textrect.centery = 10
-    screen.blit(text, textrect)
+    fpstext = DisplayText("%d fps" % int(clock.get_fps()),basicfont,(255, 0, 0),25,0,5,10)
+    fpstext.render()
 
     # display time
     if (time >= 0):
-        time_text = bigfont.render("%d" % time, True, (255, 255, 255), (0, 0, 0))
-        textrect = text.get_rect()
-        textrect.centerx = text.get_rect().width /2 + 5
-        textrect.centery = 50
-        screen.blit(time_text, textrect)
-
-
+        timetext = DisplayText("%d" % time,bigfont,(255, 255, 255),27,0,5,50)
+        timetext.render()
 
     car_group.update(deltat)
     # CHECK IF CAR IS LEAVING SCREEN
@@ -193,4 +195,11 @@ while 1:
             car.speed = 0
             car.k_left = car.k_right = car.k_down = car.k_up = 0
             crash = True
+    if crash == True:
+        # Display Game Over
+        gameovertext = DisplayText("Game Over",bigfont,(255, 0, 0),width/2,height/2,5,-10)
+        gameovertext.render()
+        # Display Restart (R-key for PC/MAC users)
+        restarttext = DisplayText("Press Start to play again",mediumfont,(255, 0, 0),width/2,height/2,5,30)
+        restarttext.render()
     pygame.display.flip()
