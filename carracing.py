@@ -132,6 +132,7 @@ while 1:
         if not hasattr(event, 'key'): continue
         down = event.type == KEYDOWN
         if crash == False:
+            car.src_image = pygame.transform.rotate(car.car_img, 0) #reset rotation for car if drifted
             if event.key == K_RIGHT: car.k_right = down * -5
             elif event.key == K_LEFT: car.k_left = down * 5
             elif event.key == K_UP: car.k_up = down * 2
