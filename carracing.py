@@ -36,6 +36,8 @@ block_list = pygame.sprite.Group()
 # This is a list of every sprite.
 # All blocks and the player block as well.
 all_sprites_list = pygame.sprite.Group()
+# Order correctly the sprites in group
+all_sprites_list = pygame.sprite.OrderedUpdates()
 
 class DisplayText:
     def __init__(self,message,font_type,color,posX,posY,marginX,marginY):
@@ -92,12 +94,6 @@ class CarSprite(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = self.position
         #print self.position
-            
-# CREATE A CAR AND RUN
-rect = screen.get_rect()
-car = CarSprite(rect.center)
-car_group = pygame.sprite.RenderPlain(car)
-all_sprites_list.add(car_group)
 
 # CREATE PADS
 pads = [
@@ -116,6 +112,12 @@ all_sprites_list.add(bonus_group)
 grease = PadSprite(1,(250,400), pygame.image.load("grease.png"))
 grease_group = pygame.sprite.RenderPlain(grease)
 all_sprites_list.add(grease_group)
+
+# CREATE A CAR AND RUN
+rect = screen.get_rect()
+car = CarSprite(rect.center)
+car_group = pygame.sprite.RenderPlain(car)
+all_sprites_list.add(car_group)
 
 pygame.font.init()
 basicfont = pygame.font.Font('data/coders_crux/coders_crux.ttf', 20)
