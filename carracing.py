@@ -57,7 +57,7 @@ class PadSprite(pygame.sprite.Sprite):
         self.position = position
         self.rect = self.image.get_rect()
         self.rect.center = self.position
-    def update(self, hit_list, hit):
+    def update(self, hit_list, normal, hit):
         if self in hit_list: self.image = hit
         else: self.image = normal
     
@@ -112,6 +112,11 @@ bonus = PadSprite(1,(150,200), pygame.image.load("bonus.png"))
 bonus_group = pygame.sprite.RenderPlain(bonus)
 all_sprites_list.add(bonus_group)
 
+# CREATE GREASE
+grease = PadSprite(1,(250,400), pygame.image.load("grease.png"))
+grease_group = pygame.sprite.RenderPlain(grease)
+all_sprites_list.add(grease_group)
+
 pygame.font.init()
 basicfont = pygame.font.Font('data/coders_crux/coders_crux.ttf', 20)
 mediumfont = pygame.font.Font('data/coders_crux/coders_crux.ttf', 40)
@@ -146,6 +151,7 @@ while 1:
     # RENDERING
     screen.blit(background_img,(0,0))
     bonus_group.clear(screen, background)
+    grease_group.clear(screen, background)
     pad_group.clear(screen, background)
     car_group.clear(screen, background)
 
@@ -204,7 +210,15 @@ while 1:
     bonus = pygame.sprite.spritecollide(car, bonus_group, False)
     if bonus:
         car.speed = car.MAX_FORWARD_SPEED # Speed up car speed
-        bonus_group.update(bonus, pygame.image.load("empty.png"))
+        bonus_group.update(bonus, pygame.image.load("bonus.png"), pygame.image.load("empty.png"))
+
+    # CHECK IF CAR IS DRIFTING
+    grease = pygame.sprite.spritecollide(car, grease_group, False)
+    if grease:
+        car.src_image = pygame.transform.rotate(car.car_img, 45) # Drifting car
+        grease_group.update(grease, pygame.image.load("grease.png"), pygame.image.load("grease.png"))
+ 
+    # LIFE LEVEL TO 0    
     if crash == True:
         # Display Game Over
         gameovertext = DisplayText("Game Over",bigfont,(255, 0, 0),width/2,height/2,5,-10)
