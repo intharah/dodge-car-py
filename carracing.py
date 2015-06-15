@@ -1,5 +1,5 @@
 # INTIALISATION
-import pygame, math, sys, subprocess
+import pygame, math, sys, subprocess, random
 from pygame.locals import *
 from pyscope import pyscope
 
@@ -50,13 +50,13 @@ class DisplayText:
         screen.blit(self.msg, self.msgRect)
 
 class PadSprite(pygame.sprite.Sprite):
-    def __init__(self,number,position,normal):
+    def __init__(self,number,normal):
         # Call the parent class (Sprite) constructor
         pygame.sprite.Sprite.__init__(self)
         # Load the image
         self.image = normal
         self.number = number
-        self.position = position
+        self.position = (random.randint(100, 640), random.randint(0, 480))
         self.rect = self.image.get_rect()
         self.rect.center = self.position
     def update(self, hit_list, normal, hit):
@@ -97,20 +97,28 @@ class CarSprite(pygame.sprite.Sprite):
 
 # CREATE PADS
 pads = [
-    PadSprite(1,(100, 100), pygame.image.load("car.png")),
-    PadSprite(2,(300, 100), pygame.image.load("car.png"))
+    PadSprite(1,pygame.image.load("rock.png")),
+    PadSprite(2,pygame.image.load("rock.png"))
 ]
 pad_group = pygame.sprite.RenderPlain(*pads)
 all_sprites_list.add(*pads)
 
-# CREATE BONUS
-bonus = PadSprite(1,(150,200), pygame.image.load("bonus.png"))
+# CREATE LIFE BONUS
+life = PadSprite(1,pygame.image.load("life.png"))
+life_group = pygame.sprite.RenderPlain(life)
+all_sprites_list.add(life_group)
+
+# CREATE SPEED BONUS
+bonus = PadSprite(1,pygame.image.load("bonus.png"))
 bonus_group = pygame.sprite.RenderPlain(bonus)
 all_sprites_list.add(bonus_group)
 
-# CREATE GREASE
-grease = PadSprite(1,(250,400), pygame.image.load("grease.png"))
-grease_group = pygame.sprite.RenderPlain(grease)
+# CREATE GREASE ITEM
+grease = [
+    PadSprite(1,pygame.image.load("grease.png")),
+    PadSprite(2,pygame.image.load("grease.png"))
+]
+grease_group = pygame.sprite.RenderPlain(*grease)
 all_sprites_list.add(grease_group)
 
 # CREATE A CAR AND RUN
@@ -220,7 +228,14 @@ while 1:
     if grease:
         car.src_image = pygame.transform.rotate(car.car_img, 45) # Drifting car
         grease_group.update(grease, pygame.image.load("grease.png"), pygame.image.load("grease.png"))
- 
+
+    # CHECK IF LIFE IS UP
+    life = pygame.sprite.spritecollide(car, life_group, False)
+    if life:
+        lifeP1=100 # Refill power bar
+        life_group.update(life, pygame.image.load("life.png"), pygame.image.load("empty.png"))
+        life=False
+  
     # LIFE LEVEL TO 0    
     if crash == True:
         # Display Game Over
