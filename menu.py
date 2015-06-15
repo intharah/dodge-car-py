@@ -149,7 +149,7 @@ if __name__ == "__main__":
     #menu.set_fontsize(64)#optional
     #menu.set_font('data/couree.fon')#optional
     #menu.move_menu(100, 99)#optional
-    menu.init(['Start','Options','Quit'], surface)#necessary
+    menu.init(['Start','Highscores','Credits'], surface)#necessary
     #menu.move_menu(0, 0)#optional
     menu.draw()#necessary
     
@@ -163,11 +163,7 @@ if __name__ == "__main__":
                 if event.key == K_DOWN:
                     menu.draw(1) #here is the Menu class function
                 if event.key == K_RETURN:
-                    if menu.get_position() == 2:#here is the Menu class function
-                        pygame.quit()
-                        pygame.display.quit()
-                        sys.exit()
-                    elif menu.get_position() == 0:#start the game here
+                    if menu.get_position() == 0:#start the game here
                         pygame.quit()
                         pygame.display.quit()
                         subprocess.call(["python", "carracing.py"])
