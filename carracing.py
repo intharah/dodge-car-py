@@ -2,7 +2,7 @@
 import pygame, math, sys, subprocess, random, pdb
 from pygame.locals import *
 from pyscope import pyscope
-from inputpi import inputpi
+
 
 pygame.init()
 
@@ -23,6 +23,7 @@ else:
     screen = scope.screen
     width = screen.get_size()[0]
     height = screen.get_size()[1]
+    from inputpi import inputpi
     inpi = inputpi()
 
 clock = pygame.time.Clock()

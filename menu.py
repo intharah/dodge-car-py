@@ -13,10 +13,11 @@ README on the bottom of document.
 import pygame, math, sys, subprocess
 from pygame.locals import *
 from pyscope import pyscope
-from inputpi import inputpi
+
 
 width = 640
 height = 480
+inpi = False
 
 if (sys.platform == "darwin") or (sys.platform == "win32"):
     surface = pygame.display.set_mode((width, height)) #0,6671875 and 0,(6) of HD resoultion
@@ -25,13 +26,15 @@ else:
     surface = scope.screen
     width = surface.get_size()[0]
     height = surface.get_size()[1]
+    from inputpi import inputpi
+    inpi = inputpi()
 
 if not pygame.display.get_init():
     pygame.display.init()
 
 if not pygame.font.get_init():
     pygame.font.init()
-inpi = inputpi()
+
 background_img = pygame.image.load("grass.png").convert()
 
 class Menu:
@@ -157,21 +160,22 @@ if __name__ == "__main__":
     pygame.key.set_repeat(199,69)#(delay,interval)
     pygame.display.update()
     while 1:
-	sticky = inpi.getPoty()
-	if not sticky is False:
-		if sticky < 10.0:
-			print "up"
-			menu.draw(-1)
-		elif sticky > 90.0:
-			print "down"
-			menu.draw(1)
-		pygame.display.update()
-	if inpi.getStart() or inpi.getB():
-		if menu.get_position() == 0:#start the game here
-                        pygame.quit()
-                        pygame.display.quit()
-                        startMenu = subprocess.Popen([sys.executable, "carracing.py"])
-                        startMenu.communicate()
+        if inpi:
+        	sticky = inpi.getPoty()
+        	if not sticky is False:
+        		if sticky < 10.0:
+        			print "up"
+        			menu.draw(-1)
+        		elif sticky > 90.0:
+        			print "down"
+        			menu.draw(1)
+        		pygame.display.update()
+        	if inpi.getStart() or inpi.getB():
+        		if menu.get_position() == 0:#start the game here
+                                pygame.quit()
+                                pygame.display.quit()
+                                startMenu = subprocess.Popen([sys.executable, "carracing.py"])
+                                startMenu.communicate()
         for event in pygame.event.get():
             if event.type == KEYDOWN:
                 if event.key == K_UP:
