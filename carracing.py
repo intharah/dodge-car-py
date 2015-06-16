@@ -2,6 +2,7 @@
 import pygame, math, sys, subprocess, random, pdb
 from pygame.locals import *
 from pyscope import pyscope
+from inputpi import inputpi
 
 pygame.init()
 
@@ -14,7 +15,7 @@ lifeP3 = 100
 
 time = 99
 pygame.time.set_timer(USEREVENT+1, 1000)
-
+inpi = False
 if (sys.platform == "darwin") or (sys.platform == "win32"):
     screen = pygame.display.set_mode((width, height))
 else:
@@ -22,6 +23,7 @@ else:
     screen = scope.screen
     width = screen.get_size()[0]
     height = screen.get_size()[1]
+    inpi = inputpi()
 
 clock = pygame.time.Clock()
 background = pygame.Surface(screen.get_size())
@@ -138,6 +140,29 @@ bigfont = pygame.font.Font('data/coders_crux/coders_crux.ttf', 70)
 while 1:
     # USER INPUT
     deltat = clock.tick(30)
+
+    if inpi:
+	    stickx = inpi.getPotx()
+	    sticky = inpi.getPoty()
+	    if not stickx is False:
+		if stickx > 50.0:
+			car.k_right = 0-int(round((stickx / 10.0)-5.0))
+			car.k_left = 0
+		else:
+			car.k_left = 0-int(round((stickx / 10.0)-5.0))
+			car.k_right = 0
+
+	    car.k_up = inpi.getB() *2
+	    car.k_down = inpi.getA() * -2
+
+	    if crash == True and inpi.getStart():
+		pygame.quit()
+       		pygame.display.quit()
+       		#subprocess.call(["python", "carracing.py"]) #not working on Mac, only Win32
+        	restart = subprocess.Popen([sys.executable, "carracing.py"])
+        	restart.communicate()
+ 
+
     for event in pygame.event.get():
         if (event.type == USEREVENT+1) and (crash == False):
             time -= 1

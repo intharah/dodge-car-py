@@ -13,6 +13,7 @@ README on the bottom of document.
 import pygame, math, sys, subprocess
 from pygame.locals import *
 from pyscope import pyscope
+from inputpi import inputpi
 
 width = 640
 height = 480
@@ -22,15 +23,15 @@ if (sys.platform == "darwin") or (sys.platform == "win32"):
 else:
     scope = pyscope()
     surface = scope.screen
-    width = screen.get_size()[0]
-    height = screen.get_size()[1]
+    width = surface.get_size()[0]
+    height = surface.get_size()[1]
 
 if not pygame.display.get_init():
     pygame.display.init()
 
 if not pygame.font.get_init():
     pygame.font.init()
-
+inpi = inputpi()
 background_img = pygame.image.load("grass.png").convert()
 
 class Menu:
@@ -156,6 +157,21 @@ if __name__ == "__main__":
     pygame.key.set_repeat(199,69)#(delay,interval)
     pygame.display.update()
     while 1:
+	sticky = inpi.getPoty()
+	if not sticky is False:
+		if sticky < 10.0:
+			print "up"
+			menu.draw(-1)
+		elif sticky > 90.0:
+			print "down"
+			menu.draw(1)
+		pygame.display.update()
+	if inpi.getStart() or inpi.getB():
+		if menu.get_position() == 0:#start the game here
+                        pygame.quit()
+                        pygame.display.quit()
+                        startMenu = subprocess.Popen([sys.executable, "carracing.py"])
+                        startMenu.communicate()
         for event in pygame.event.get():
             if event.type == KEYDOWN:
                 if event.key == K_UP:
@@ -175,5 +191,5 @@ if __name__ == "__main__":
             elif event.type == QUIT:
                 pygame.display.quit()
                 sys.exit()
-        pygame.time.wait(8)
+        pygame.time.wait(100)
         
