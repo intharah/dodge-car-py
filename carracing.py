@@ -13,8 +13,9 @@ drive = pygame.mixer.Sound(os.path.join('sounds','drive.wav'))  #load sound
     
 #music is already the name of the music object
 #pygame.mixer.music.play(loops=0, start=0.0): return None
-pygame.mixer.music.set_volume(0.3)
+pygame.mixer.music.set_volume(0.6)
 pygame.mixer.music.play(-1) # play endless
+drive.set_volume(0.7)
 
 width = 640
 height = 480
