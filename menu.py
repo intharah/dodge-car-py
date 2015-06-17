@@ -10,10 +10,21 @@ README on the bottom of document.
       more abuot license you can find in data/coders-crux/license.txt
 '''
  
-import pygame, math, sys, subprocess
+import pygame, math, os, sys, subprocess
 from pygame.locals import *
 from pyscope import pyscope
 
+#FX and sounds
+pygame.mixer.pre_init(44100, 16, 2, 2048) # setup mixer to avoid sound lag
+pygame.init()
+
+pygame.mixer.music.load(os.path.join('sounds', 'highway_slaughter.ogg'))#load music
+#jump = pygame.mixer.Sound(os.path.join('sounds','jump.wav'))  #load sound
+#fail = pygame.mixer.Sound(os.path.join('sounds','fail.wav'))  #load sound
+    
+#music is already the name of the music object
+#pygame.mixer.music.play(loops=0, start=0.0): return None
+pygame.mixer.music.play(-1) # play endless
 
 width = 640
 height = 480
@@ -161,21 +172,21 @@ if __name__ == "__main__":
     pygame.display.update()
     while 1:
         if inpi:
-        	sticky = inpi.getPoty()
-        	if not sticky is False:
-        		if sticky < 10.0:
-        			print "up"
-        			menu.draw(-1)
-        		elif sticky > 90.0:
-        			print "down"
-        			menu.draw(1)
-        		pygame.display.update()
-        	if inpi.getStart() or inpi.getB():
-        		if menu.get_position() == 0:#start the game here
-                                pygame.quit()
-                                pygame.display.quit()
-                                startMenu = subprocess.Popen([sys.executable, "carracing.py"])
-                                startMenu.communicate()
+            sticky = inpi.getPoty()
+            if not sticky is False:
+                if sticky < 10.0:
+                    print "up"
+                    menu.draw(-1)
+            elif sticky > 90.0:
+                print "down"
+                menu.draw(1)
+            pygame.display.update()
+            if inpi.getStart() or inpi.getB():
+                if menu.get_position() == 0:#start the game here
+                    pygame.quit()
+                    pygame.display.quit()
+                    startMenu = subprocess.Popen([sys.executable, "carracing.py"])
+                    startMenu.communicate()
         for event in pygame.event.get():
             if event.type == KEYDOWN:
                 if event.key == K_UP:

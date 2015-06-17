@@ -1,10 +1,19 @@
 # INTIALISATION
-import pygame, math, sys, subprocess, random, pdb
+import pygame, math, os, sys, subprocess, random, pdb
 from pygame.locals import *
 from pyscope import pyscope
 
-
+#FX and sounds
+pygame.mixer.pre_init(44100, 16, 2, 2048) # setup mixer to avoid sound lag
 pygame.init()
+
+pygame.mixer.music.load(os.path.join('sounds', 'highway_slaughter.ogg'))#load music
+#jump = pygame.mixer.Sound(os.path.join('sounds','jump.wav'))  #load sound
+#fail = pygame.mixer.Sound(os.path.join('sounds','fail.wav'))  #load sound
+    
+#music is already the name of the music object
+#pygame.mixer.music.play(loops=0, start=0.0): return None
+pygame.mixer.music.play(-1) # play endless
 
 width = 640
 height = 480
@@ -143,25 +152,25 @@ while 1:
     deltat = clock.tick(30)
 
     if inpi:
-	    stickx = inpi.getPotx()
-	    sticky = inpi.getPoty()
-	    if not stickx is False:
-		if stickx > 50.0:
-			car.k_right = 0-int(round((stickx / 10.0)-5.0))
-			car.k_left = 0
-		else:
-			car.k_left = 0-int(round((stickx / 10.0)-5.0))
-			car.k_right = 0
+        stickx = inpi.getPotx()
+        sticky = inpi.getPoty()
+        if not stickx is False:
+            if stickx > 50.0:
+                car.k_right = 0-int(round((stickx / 10.0)-5.0))
+                car.k_left = 0
+            else:
+                car.k_left = 0-int(round((stickx / 10.0)-5.0))
+                car.k_right = 0
 
-	    car.k_up = inpi.getB() *2
-	    car.k_down = inpi.getA() * -2
+        car.k_up = inpi.getB() *2
+        car.k_down = inpi.getA() * -2
 
-	    if crash == True and inpi.getStart():
-		pygame.quit()
-       		pygame.display.quit()
-       		#subprocess.call(["python", "carracing.py"]) #not working on Mac, only Win32
-        	restart = subprocess.Popen([sys.executable, "carracing.py"])
-        	restart.communicate()
+    if crash == True and inpi.getStart():
+        pygame.quit()
+        pygame.display.quit()
+        #subprocess.call(["python", "carracing.py"]) #not working on Mac, only Win32
+        restart = subprocess.Popen([sys.executable, "carracing.py"])
+        restart.communicate()
  
 
     for event in pygame.event.get():
