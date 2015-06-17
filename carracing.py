@@ -4,15 +4,16 @@ from pygame.locals import *
 from pyscope import pyscope
 
 #FX and sounds
-pygame.mixer.pre_init(44100, 16, 2, 2048) # setup mixer to avoid sound lag
+pygame.mixer.pre_init(44100,-16,1, 512) # setup mixer to avoid sound lag
 pygame.init()
 
 pygame.mixer.music.load(os.path.join('sounds', 'highway_slaughter.ogg'))#load music
-#jump = pygame.mixer.Sound(os.path.join('sounds','jump.wav'))  #load sound
+drive = pygame.mixer.Sound(os.path.join('sounds','drive.wav'))  #load sound
 #fail = pygame.mixer.Sound(os.path.join('sounds','fail.wav'))  #load sound
     
 #music is already the name of the music object
 #pygame.mixer.music.play(loops=0, start=0.0): return None
+pygame.mixer.music.set_volume(0.3)
 pygame.mixer.music.play(-1) # play endless
 
 width = 640
@@ -165,12 +166,12 @@ while 1:
         car.k_up = inpi.getB() *2
         car.k_down = inpi.getA() * -2
 
-    if crash == True and inpi.getStart():
-        pygame.quit()
-        pygame.display.quit()
-        #subprocess.call(["python", "carracing.py"]) #not working on Mac, only Win32
-        restart = subprocess.Popen([sys.executable, "carracing.py"])
-        restart.communicate()
+        if crash == True and inpi.getStart():
+            pygame.quit()
+            pygame.display.quit()
+            #subprocess.call(["python", "carracing.py"]) #not working on Mac, only Win32
+            restart = subprocess.Popen([sys.executable, "carracing.py"])
+            restart.communicate()
  
 
     for event in pygame.event.get():
@@ -185,6 +186,7 @@ while 1:
             elif event.key == K_UP: car.k_up = down * 2
             elif event.key == K_DOWN: car.k_down = down * -2
             elif event.key == K_SPACE: car.k_left = car.k_right = car.k_down = car.k_up = 0
+            drive.play()
         elif crash == True and event.key == K_r:
             pygame.quit()
             pygame.display.quit()
