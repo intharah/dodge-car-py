@@ -13,6 +13,7 @@ drift = pygame.mixer.Sound(os.path.join('sounds','drift.wav'))  #load sound
 speed = pygame.mixer.Sound(os.path.join('sounds','speed.wav'))  #load sound
 energy = pygame.mixer.Sound(os.path.join('sounds','energy.wav'))  #load sound
 hit = pygame.mixer.Sound(os.path.join('sounds','hit.wav'))  #load sound
+explosion = pygame.mixer.Sound(os.path.join('sounds','explosion.wav'))  #load sound
 
 #fail = pygame.mixer.Sound(os.path.join('sounds','fail.wav'))  #load sound
     
@@ -22,6 +23,8 @@ pygame.mixer.music.set_volume(0.6)
 pygame.mixer.music.play(-1) # play endless
 drive.set_volume(0.4)
 drift.set_volume(0.2)
+play_explosion_sound = False
+explosion_isPlayed = 0
 
 width = 640
 height = 480
@@ -186,6 +189,7 @@ while 1:
         if not hasattr(event, 'key'): continue
         down = event.type == KEYDOWN
         if crash == False:
+            explosion_isPlayed = 0 
             car.src_image = pygame.transform.rotate(car.car_img, 0) #reset rotation for car if drifted
             if event.key == K_RIGHT:
                 car.k_right = down * -5
@@ -296,8 +300,16 @@ while 1:
         all_sprites_list.remove(life)
         life = False
   
-    # LIFE LEVEL TO 0    
+    # LIFE LEVEL TO 0
+    if play_explosion_sound and explosion_isPlayed == 0:
+        play_explosion_sound = False
+        explosion_isPlayed += 1
+        explosion.play()
     if crash == True:
+        #Stop sfx and increase volume
+        hit.stop()
+        play_explosion_sound = True
+        pygame.mixer.music.set_volume(0.7)
         # Display Game Over
         gameovertext = DisplayText("Game Over",bigfont,(255, 0, 0),width/2,height/2,5,-10)
         gameovertext.render()
