@@ -9,13 +9,19 @@ pygame.init()
 
 pygame.mixer.music.load(os.path.join('sounds', 'highway_slaughter.ogg'))#load music
 drive = pygame.mixer.Sound(os.path.join('sounds','drive.wav'))  #load sound
+drift = pygame.mixer.Sound(os.path.join('sounds','drift.wav'))  #load sound
+speed = pygame.mixer.Sound(os.path.join('sounds','speed.wav'))  #load sound
+energy = pygame.mixer.Sound(os.path.join('sounds','energy.wav'))  #load sound
+hit = pygame.mixer.Sound(os.path.join('sounds','hit.wav'))  #load sound
+
 #fail = pygame.mixer.Sound(os.path.join('sounds','fail.wav'))  #load sound
     
 #music is already the name of the music object
 #pygame.mixer.music.play(loops=0, start=0.0): return None
 pygame.mixer.music.set_volume(0.6)
 pygame.mixer.music.play(-1) # play endless
-drive.set_volume(0.7)
+drive.set_volume(0.4)
+drift.set_volume(0.2)
 
 width = 640
 height = 480
@@ -170,10 +176,9 @@ while 1:
         if crash == True and inpi.getStart():
             pygame.quit()
             pygame.display.quit()
-            #subprocess.call(["python", "carracing.py"]) #not working on Mac, only Win32
+
             restart = subprocess.Popen([sys.executable, "carracing.py"])
             restart.communicate()
- 
 
     for event in pygame.event.get():
         if (event.type == USEREVENT+1) and (crash == False):
@@ -182,23 +187,28 @@ while 1:
         down = event.type == KEYDOWN
         if crash == False:
             car.src_image = pygame.transform.rotate(car.car_img, 0) #reset rotation for car if drifted
-            if event.key == K_RIGHT: car.k_right = down * -5
-            elif event.key == K_LEFT: car.k_left = down * 5
-            elif event.key == K_UP: car.k_up = down * 2
-            elif event.key == K_DOWN: car.k_down = down * -2
+            if event.key == K_RIGHT:
+                car.k_right = down * -5
+                drive.play()
+            elif event.key == K_LEFT:
+                car.k_left = down * 5
+                drive.play()
+            elif event.key == K_UP:
+                car.k_up = down * 2
+                drive.play()
+            elif event.key == K_DOWN:
+                car.k_down = down * -2
+                drive.play()
             elif event.key == K_SPACE: car.k_left = car.k_right = car.k_down = car.k_up = 0
-            drive.play()
         elif crash == True and event.key == K_r:
             pygame.quit()
             pygame.display.quit()
-            #subprocess.call(["python", "carracing.py"]) #not working on Mac, only Win32
             restart = subprocess.Popen([sys.executable, "carracing.py"])
             restart.communicate()
         if event.key == K_ESCAPE:
             pygame.quit()
             pygame.display.quit()
             # pdb.set_trace() #DEBUG
-            #subprocess.call(["python", "menu.py"]) #not working on Mac, only Win32
             gotoMenu = subprocess.Popen([sys.executable, "menu.py"])
             gotoMenu.communicate()
     if time == 0:
@@ -254,6 +264,7 @@ while 1:
     pads = pygame.sprite.spritecollide(car, pad_group, False)
     if pads:
         lifeP1=lifeP1-10
+        hit.play()
         if lifeP1 != 0:
             car.speed = -car.speed
         else:
@@ -266,20 +277,24 @@ while 1:
     bonus = pygame.sprite.spritecollide(car, bonus_group, False)
     if bonus:
         car.speed = car.MAX_FORWARD_SPEED # Speed up car speed
-        bonus_group.update(bonus, pygame.image.load("bonus.png"), pygame.image.load("empty.png"))
+        speed.play()
+        bonus_group.remove(bonus)
+        all_sprites_list.remove(bonus)
 
     # CHECK IF CAR IS DRIFTING
     grease = pygame.sprite.spritecollide(car, grease_group, False)
     if grease:
         car.src_image = pygame.transform.rotate(car.car_img, 45) # Drifting car
-        grease_group.update(grease, pygame.image.load("grease.png"), pygame.image.load("grease.png"))
+        drift.play()
 
     # CHECK IF LIFE IS UP
     life = pygame.sprite.spritecollide(car, life_group, False)
     if life:
         lifeP1=100 # Refill power bar
-        life_group.update(life, pygame.image.load("life.png"), pygame.image.load("empty.png"))
-        life=False
+        energy.play()
+        life_group.remove(life)
+        all_sprites_list.remove(life)
+        life = False
   
     # LIFE LEVEL TO 0    
     if crash == True:
