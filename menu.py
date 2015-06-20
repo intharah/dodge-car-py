@@ -30,7 +30,7 @@ width = 640
 height = 480
 inpi = False
 
-if (sys.platform == "darwin") or (sys.platform == "win32"):
+if (sys.platform == "darwin") or (sys.platform == "win32") or (not os.uname()[4].startswith("arm")):
     surface = pygame.display.set_mode((width, height)) #0,6671875 and 0,(6) of HD resoultion
 else:
     scope = pyscope()

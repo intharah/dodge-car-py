@@ -36,7 +36,8 @@ lifeP3 = 100
 time = 99
 pygame.time.set_timer(USEREVENT+1, 1000)
 inpi = False
-if (sys.platform == "darwin") or (sys.platform == "win32"):
+
+if (sys.platform == "darwin") or (sys.platform == "win32") or (not os.uname()[4].startswith("arm")):
     screen = pygame.display.set_mode((width, height))
 else:
     scope = pyscope()
