@@ -1,7 +1,12 @@
 # INTIALISATION
-import pygame, math, os, sys, subprocess, random, pdb
+import pygame, math, os, sys, subprocess, random, pdb, ConfigParser
 from pygame.locals import *
 from pyscope import pyscope
+
+#load Settings
+settings = ConfigParser.ConfigParser()
+settings.read("settings.ini")
+
 
 #FX and sounds
 pygame.mixer.pre_init(44100,-16,1, 512) # setup mixer to avoid sound lag
@@ -94,9 +99,16 @@ class CarSprite(pygame.sprite.Sprite):
     MAX_REVERSE_SPEED = 10
     ACCELERATION = 2
     TURN_SPEED = 5
+
     car_hit = pygame.image.load("pad_hit.png")
-    car_img = pygame.image.load("car.png")
-    def __init__(self, position):
+
+    def __init__(self, position, player):
+        if (player == 0):
+            self.car_img = pygame.image.load("carr.png")
+        elif (player ==1):
+            self.car_img = pygame.image.load("carg.png")
+        elif (player ==2):
+            self.car_img = pygame.image.load("carb.png")
         pygame.sprite.Sprite.__init__(self)
         self.src_image = self.car_img
         self.position = position
@@ -149,7 +161,8 @@ all_sprites_list.add(grease_group)
 
 # CREATE A CAR AND RUN
 rect = screen.get_rect()
-car = CarSprite(rect.center)
+car = CarSprite(rect.center, int(settings.get("General", "player")))
+#car = CarSprite(rect.center, 2)
 car_group = pygame.sprite.RenderPlain(car)
 all_sprites_list.add(car_group)
 
