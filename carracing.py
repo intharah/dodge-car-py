@@ -160,11 +160,22 @@ grease_group = pygame.sprite.RenderPlain(*grease)
 all_sprites_list.add(grease_group)
 
 # CREATE A CAR AND RUN
+my_car_num = int(settings.get("General", "player"))
 rect = screen.get_rect()
-car = CarSprite(rect.center, int(settings.get("General", "player")))
-#car = CarSprite(rect.center, 2)
+car = CarSprite(rect.center, my_car_num)
 car_group = pygame.sprite.RenderPlain(car)
 all_sprites_list.add(car_group)
+
+# CREATE OTHER CARS
+pos_car2 = rect.center
+car2 = CarSprite((rect.center[0] -50, rect.center[1]), (my_car_num +1) % 3)
+car3 = CarSprite((rect.center[0] +50, rect.center[1]), (my_car_num +2) % 3)
+ennemies = [
+    car2,
+    car3
+]
+ennemies_group = pygame.sprite.RenderPlain(*ennemies)
+all_sprites_list.add(ennemies_group)
 
 pygame.font.init()
 basicfont = pygame.font.Font('data/coders_crux/coders_crux.ttf', 20)
@@ -238,6 +249,7 @@ while 1:
     grease_group.clear(screen, background)
     pad_group.clear(screen, background)
     car_group.clear(screen, background)
+    ennemies_group.clear(screen, background)
 
     # Display OSD
     pygame.draw.rect(screen,(0,0,0), (0,0,60,height), 0)
@@ -264,6 +276,7 @@ while 1:
         timetext.render()
 
     car_group.update(deltat)
+    ennemies_group.update(deltat)
     # CHECK IF CAR IS LEAVING SCREEN
     if car.position[0] <90:
         car.position = (width, car.position[1])
@@ -290,6 +303,21 @@ while 1:
             car.speed = 0
             car.k_left = car.k_right = car.k_down = car.k_up = 0
             crash = True
+            
+    # CHECK COLLISIONS CAR/CAR
+    enn = pygame.sprite.spritecollide(car, ennemies_group, False)
+    if enn:
+        lifeP1=lifeP1-10
+        hit.play()
+        print car.direction
+        print enn[0].direction
+        if lifeP1 != 0:
+            car.speed = -car.speed
+        else:
+            car.src_image = car.car_hit
+            car.speed = 0
+            car.k_left = car.k_right = car.k_down = car.k_up = 0
+            crash = True            
 
     # CHECK IF CAR HAS TAKEN BONUS
     bonus = pygame.sprite.spritecollide(car, bonus_group, False)
