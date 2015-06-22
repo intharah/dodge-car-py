@@ -36,7 +36,7 @@ class inputpi:
 	tolerance = 5       # to keep from being jittery we'll only change
 	                    # volume when the pot has moved more than 5 'counts'
 
-	DEBUG = 0
+	DEBUG = 1
 
 	def __init__(self):	
 		GPIO.setwarnings(False)
@@ -159,4 +159,27 @@ class inputpi:
 
 	def getStick(self):
 		return not GPIO.input(self.bstick)
+
+inpi = inputpi()
+while 1:
+	inpi.getPotx()
+	inpi.getPoty()
+	if inpi.getA():
+		print 'A'
+	if inpi.getB():
+		print 'B' 
+	if inpi.getX():
+		print 'X' 
+	if inpi.getY():
+		print 'Y' 
+	if inpi.getL():
+		print 'L' 
+	if inpi.getR():
+		print 'R' 
+	if inpi.getSelect():
+		print 'Select' 
+	if inpi.getStart():
+		print 'Start' 
+	if inpi.getStick():
+		print 'Stick' 
 
