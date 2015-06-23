@@ -7,6 +7,9 @@ import time
 import os
 import RPi.GPIO as GPIO
 
+STICKEVENT = USEREVENT+2
+BTNEVENT = USEREVENT+3
+
 class inputpi:
 	# change these as desired - they're the pins connected from the
 	# SPI port on the ADC to the Cobbler
@@ -14,17 +17,6 @@ class inputpi:
 	SPIMISO = 23
 	SPIMOSI = 24
 	SPICS = 25
-	bselect = 2
-	bstart = 3
-	by = 4
-	bx = 14
-	bb = 15
-	bl = 17
-	br = 27
-	ba = 22
-	bstick = 10
-
-
 
 
 	# 10k trim pot connected to adc #0
@@ -39,6 +31,9 @@ class inputpi:
 	DEBUG = 0
 
 	def __init__(self):	
+		btns_names = ['select', 'start', 'y', 'x', 'b', 'l', 'r', 'a', 'stick']
+		btns_pins = [2, 3, 4, 14, 15, 17, 27, 22, 10]
+
 		GPIO.setwarnings(False)
 		GPIO.setmode(GPIO.BCM)
 
@@ -133,30 +128,17 @@ class inputpi:
 		else:
 			return False
 
-	def getSelect(self):
-		return not GPIO.input(self.bselect)
 
-	def getStart(self):
-		return not GPIO.input(self.bstart)
-
-	def getX(self):
-		return not GPIO.input(self.bx)
-
-	def getY(self):
-		return not GPIO.input(self.by)
-
-	def getA(self):
-		return not GPIO.input(self.ba)
-
-	def getB(self):
-		return not GPIO.input(self.bb)
-
-	def getL(self):
-		return not GPIO.input(self.bl)
-
-	def getR(self):
-		return not GPIO.input(self.br)
-
-	def getStick(self):
-		return not GPIO.input(self.stick)
+	def sendEvents(self):
+		stickx = self.getPotx()
+        sticky = self.getPoty()
+        if not stickx is False:
+			stickxevent = pygame.event.Event(STICKEVENT, axis=0, value=stickx)
+			pygame.event.post(stickxevent)
+		if not sticky is False:
+			stickyevent = pygame.event.Event(STICKEVENT, axis=1, value=sticky)
+			pygame.event.post(stickyevent)
+		for i in btns_names:
+			if not GPIO.input(i):
+				btnevent = pygame.event.Event(BTNEVENT, btn=btns_pins[i])
 
