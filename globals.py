@@ -1,0 +1,6 @@
+import pygame
+from pygame.locals import *
+TIMER1 = USEREVENT+1
+TIMER2 = USEREVENT+4
+STICKEVENT = USEREVENT+2
+BTNEVENT = USEREVENT+3

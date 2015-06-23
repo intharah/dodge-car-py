@@ -7,8 +7,6 @@ import time
 import os
 import RPi.GPIO as GPIO
 
-STICKEVENT = USEREVENT+2
-BTNEVENT = USEREVENT+3
 
 class inputpi:
 	# change these as desired - they're the pins connected from the
@@ -131,8 +129,8 @@ class inputpi:
 
 	def sendEvents(self):
 		stickx = self.getPotx()
-        sticky = self.getPoty()
-        if not stickx is False:
+		sticky = self.getPoty()
+		if not stickx is False:
 			stickxevent = pygame.event.Event(STICKEVENT, axis=0, value=stickx)
 			pygame.event.post(stickxevent)
 		if not sticky is False:
