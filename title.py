@@ -79,15 +79,15 @@ class TitleScene(SceneBase):
             self.blink = self.blink -1
     
     def Render(self, screen, clock, deltat):
-        background_img = pygame.image.load("grass.png").convert()
-        screen.blit(background_img,(0,0))
+        background_img = pygame.image.load("game_logo.png").convert()
+        screen.blit(background_img,(180,0))
         if self.blink > 0:
             if not self.p1ready:
-                p1text = DisplayText(screen,"Press Start",self.font,(255, 255, 255),320,200,0,0)
+                p1text = DisplayText(screen,"Press Start",self.font,(255, 255, 255),320,320,0,0)
                 p1text.render()
         '''
             if not self.p2ready:
-                p1text = DisplayText(screen,"Press Start",self.font,(255, 255, 255),320,250,0,0)
+                p1text = DisplayText(screen,"Press Start",self.font,(255, 255, 255),320,370,0,0)
                 p1text.render()
         '''
         if self.p1ready:

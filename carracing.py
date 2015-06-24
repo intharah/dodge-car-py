@@ -52,11 +52,11 @@ class CarSprite(pygame.sprite.Sprite):
     def __init__(self, position, player):
         self.player = player
         if (player == 0):
-            self.car_img = pygame.image.load("carr.png")
+            self.car_img = pygame.image.load("car1.png")
         elif (player ==1):
-            self.car_img = pygame.image.load("carg.png")
+            self.car_img = pygame.image.load("car2.png")
         elif (player ==2):
-            self.car_img = pygame.image.load("carb.png")
+            self.car_img = pygame.image.load("car3.png")
         pygame.sprite.Sprite.__init__(self)
         self.src_image = self.car_img
         self.position = position
@@ -82,11 +82,11 @@ class CarSprite(pygame.sprite.Sprite):
         #print self.position
     def reset(self):
         if (self.player == 0):
-            self.car_img = pygame.image.load("carr.png")
+            self.car_img = pygame.image.load("car1.png")
         elif (self.player ==1):
-            self.car_img = pygame.image.load("carg.png")
+            self.car_img = pygame.image.load("car2.png")
         elif (self.player ==2):
-            self.car_img = pygame.image.load("carb.png")
+            self.car_img = pygame.image.load("car3.png")
         
 
 class GameScene(SceneBase):
@@ -167,7 +167,7 @@ class GameScene(SceneBase):
         self.background = pygame.Surface(self.screen.get_size())
         self.background = self.background.convert()
         self.background.fill((250, 250, 250))
-        self.background_img = pygame.image.load("grass.png").convert()
+        self.background_img = pygame.image.load("road.png").convert()
 
     def Start(self):
         my_car_num = int(self.settings.get("General", "player"))
@@ -180,6 +180,8 @@ class GameScene(SceneBase):
         self.crash = False
         for i in self.all_sprites_list.sprites():
             i.reset()
+            
+        self.car2.reset()
             
         if my_car_num == 0:
             rect = self.screen.get_rect().center
@@ -273,8 +275,18 @@ class GameScene(SceneBase):
                 self.car.src_image = self.car.car_hit
                 self.car.speed = 0
                 self.car.k_left = self.car.k_right = self.car.k_down = self.car.k_up = 0
+                self.car2.speed = 0
+                self.car2.k_left = self.car2.k_right = self.car2.k_down = self.car2.k_up = 0                
                 self.crash = True
 
+        if self.lifeP2 <=0:
+            self.car.speed = 0
+            self.car.k_left = self.car.k_right = self.car.k_down = self.car.k_up = 0
+            self.car2.src_image = self.car2.car_hit
+            self.car2.speed = 0
+            self.car2.k_left = self.car2.k_right = self.car2.k_down = self.car2.k_up = 0
+            
+            self.crash = True            
             
         # CHECK COLLISIONS CAR/CAR
         enn = pygame.sprite.spritecollide(self.car, self.ennemies_group, False)
@@ -299,9 +311,10 @@ class GameScene(SceneBase):
                 self.car.src_image = self.car.car_hit
                 self.car.speed = 0
                 self.car.k_left = self.car.k_right = self.car.k_down = self.car.k_up = 0
+                self.car2.speed = 0
+                self.car2.k_left = self.car2.k_right = self.car2.k_down = self.car2.k_up = 0                
                 self.crash = True
-            if self.lifeP2 <=0:
-                self.crash = True            
+          
 
         # CHECK IF CAR HAS TAKEN BONUS
         bonus = pygame.sprite.spritecollide(self.car, self.bonus_group, False)
