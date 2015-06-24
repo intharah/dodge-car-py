@@ -31,11 +31,11 @@ class CarSprite(pygame.sprite.Sprite):
 
     def __init__(self, position, player):
         if (player == 0):
-            self.car_img = pygame.image.load("carr.png")
+            self.car_img = pygame.image.load("car1.png")
         elif (player ==1):
-            self.car_img = pygame.image.load("carg.png")
+            self.car_img = pygame.image.load("car2.png")
         elif (player ==2):
-            self.car_img = pygame.image.load("carb.png")
+            self.car_img = pygame.image.load("car3.png")
         pygame.sprite.Sprite.__init__(self)
         self.src_image = self.car_img
         self.position = position
@@ -130,7 +130,7 @@ class GameScene(SceneBase):
         self.background = pygame.Surface(self.screen.get_size())
         self.background = self.background.convert()
         self.background.fill((250, 250, 250))
-        self.background_img = pygame.image.load("grass.png").convert()
+        self.background_img = pygame.image.load("road.png").convert()
     
     def ProcessInput(self, events, pressed_keys):
         '''
