@@ -203,28 +203,6 @@ class GameScene(SceneBase):
         print "stop game"
 
     def ProcessInput(self, events, pressed_keys):
-        '''
-        if inpi:
-            stickx = inpi.getPotx()
-            sticky = inpi.getPoty()
-            if not stickx is False:
-                if stickx > 50.0:
-                    car.k_right = 0-int(round((stickx / 10.0)-5.0))
-                    car.k_left = 0
-                else:
-                    car.k_left = 0-int(round((stickx / 10.0)-5.0))
-                    car.k_right = 0
-
-            car.k_up = inpi.getB() *2
-            car.k_down = inpi.getA() * -2
-
-            if crash == True and inpi.getStart():
-                pygame.quit()
-                pygame.display.quit()
-
-                restart = subprocess.Popen([sys.executable, "carracing.py"])
-                restart.communicate()
-        '''
         for event in events:
             if (event.type == TIMER1) and (self.crash == False):
                 self.time -= 1
@@ -232,11 +210,27 @@ class GameScene(SceneBase):
                 self.car2.direction = random.randint(0, 359)
                 self.car2.src_image = pygame.transform.rotate(self.car2.car_img, 0)
 	    if (event.type == BTNEVENT):
-		print "btn"+ event.btn
-		if event.btn == 'a':
-			self.car.k_up = 2
 		if event.btn == 'b':
-			self.car.k_down = -2
+			if event.edge == 'rising':
+				self.car.k_up = 2
+			else:
+				self.car.k_up = 0
+		if event.btn == 'a':
+			if event.edge == 'rising':
+				self.car.k_down = -2
+			else:
+				self.car.k_down = 0
+		if event.btn == 'start' and self.crash == True:
+			self.SwitchToScene('title')
+            if (event.type == STICKEVENT):
+		if (event.axis == 0):
+			if event.value > 50.0:
+				self.car.k_right = 0-int(round((event.value / 10.0)-5.0))
+				self.car.k_left = 0
+			else:
+				self.car.k_left = 0-int(round((event.value / 10.0)-5.0))
+				self.car.k_right = 0 
+		
             if not hasattr(event, 'key'): continue
             down = event.type == KEYDOWN
             if self.crash == False:
