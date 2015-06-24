@@ -7,10 +7,6 @@ from Displaytext import DisplayText
 from globals import *
 
 
-
-
-    
-
 class PadSprite(pygame.sprite.Sprite):
     def __init__(self,number,normal, screen):
         self.screen = screen
