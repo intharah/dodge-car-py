@@ -13,7 +13,7 @@ class TitleScene(SceneBase):
         self.font = pygame.font.Font('data/coders_crux/coders_crux.ttf', 40)
         pygame.time.set_timer(TIMER2, 1000)
         self.my_car = int(self.settings.get("General", "player"))
-        self.blink = 30
+        self.blink = 7
         self.p1ready = False
         self.p2ready = False
 
@@ -29,31 +29,11 @@ class TitleScene(SceneBase):
 
     
     def ProcessInput(self, events, pressed_keys):
-        #netmsg = self.net.recv()
-        #if netmsg:
-        #    print netmsg
-        '''if inpi:
-            sticky = inpi.getPoty()
-            if not sticky is False:
-                if sticky < 10.0:
-                    print "up"
-                    menu.draw(-1)
-            elif sticky > 90.0:
-                print "down"
-                menu.draw(1)
-            pygame.display.update()
-            if inpi.getStart() or inpi.getB():
-                if menu.get_position() == 0:#start the game here
-                    pygame.quit()
-                    pygame.display.quit()
-                    startMenu = subprocess.Popen([sys.executable, "carracing.py"])
-                    startMenu.communicate()
-        '''
         for event in events:
             if event.type == BTNEVENT:
                 self.SwitchToScene('game')
             if event.type == TIMER2:
-                self.blink = 15
+                self.blink = 7
             if event.type == KEYDOWN:
                 if event.key == K_RETURN:
                     '''
@@ -77,6 +57,7 @@ class TitleScene(SceneBase):
     def Update(self):
         if self.blink > 0:
             self.blink = self.blink -1
+	    print self.blink
     
     def Render(self, screen, clock, deltat):
         background_img = pygame.image.load("game_logo.png").convert()

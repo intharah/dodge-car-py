@@ -27,14 +27,16 @@ class PadSprite(pygame.sprite.Sprite):
         self.rect.center = self.position
     def pseudoRandomPosition(self):
         center = self.screen.get_rect().center
+	print "center" 
+	print center
         found = False
-        result = center
+        result = (0,0)
         while not found:
-            x = random.randint(100, 600)
-            y = random.randint(0, 400)
-            dist = math.sqrt((center[0] -x)**2 + (center[0] -y) ** 2)
+            x = random.randint(100, 655)
+            y = random.randint(0, 415)
+            dist = math.sqrt((center[0] -x)**2 + (center[1] -y) ** 2)
             print dist
-            if dist > 150:
+            if dist > 100:
                 result = (x,y)
                 print result
                 found = True
@@ -87,7 +89,7 @@ class CarSprite(pygame.sprite.Sprite):
             self.car_img = pygame.image.load("car2.png")
         elif (self.player ==2):
             self.car_img = pygame.image.load("car3.png")
-        
+       	self.image = pygame.transform.rotate(self.src_image, 1) 
 
 class GameScene(SceneBase):
     def __init__(self, screen, inputpi, settings, width, height, sfx, net):
@@ -136,9 +138,9 @@ class GameScene(SceneBase):
         # CREATE A CAR AND RUN
         my_car_num = int(self.settings.get("General", "player"))
         if my_car_num == 0:
-            rect = self.screen.get_rect().center
+            rect = (self.screen.get_rect().center[0] +25, self.screen.get_rect().center[1])
         else:
-            rect = (self.screen.get_rect().center[0] -50, self.screen.get_rect().center[1])
+            rect = (self.screen.get_rect().center[0] -25, self.screen.get_rect().center[1])
         self.car = CarSprite(rect, my_car_num)
         self.car_group = pygame.sprite.RenderPlain(self.car)
         self.all_sprites_list.add(self.car_group)
@@ -146,9 +148,9 @@ class GameScene(SceneBase):
         # CREATE OTHER CARS
         pos_car2 = self.screen.get_rect().center
         if my_car_num == 1:
-            pos_car2 = self.screen.get_rect().center
+            pos_car2 = (self.screen.get_rect().center[0] +25, self.screen.get_rect().center[1])
         else:
-            pos_car2 = (self.screen.get_rect().center[0] -50, self.screen.get_rect().center[1] ) 
+            pos_car2 = (self.screen.get_rect().center[0] -25, self.screen.get_rect().center[1] ) 
      
         self.car2 = CarSprite(pos_car2, (my_car_num +1) % 2)
         ennemies = [
@@ -174,7 +176,8 @@ class GameScene(SceneBase):
         print "start game"
         self.lifeP1 = 100
         self.lifeP2 = 100
-
+	self.play_explosion_sound = False
+	self.explosion_isPlayed = 0
 
         self.time = 99
         self.crash = False
@@ -184,14 +187,14 @@ class GameScene(SceneBase):
 
             
         if my_car_num == 0:
-            rect = self.screen.get_rect().center
+            rect = (self.screen.get_rect().center[0] +25, self.screen.get_rect().center[1]) 
         else:
-            rect = (rect.center[0] -50, rect.center[1])
+            rect = (self.screen.get_rect().center[0] -25, self.screen.get_rect().center[1])
         self.car.position = rect
         self.car.direction = 0
 
         if my_car_num == 1:
-            pos_car2 = self.screen.get_rect().center
+            pos_car2 = (self.screen.get_rect().center[0] +25, self.screen.get_rect().center[1])
         else:
             pos_car2 = (self.screen.get_rect().center[0] -50, self.screen.get_rect().center[1] ) 
         self.car2.position = pos_car2
@@ -203,164 +206,161 @@ class GameScene(SceneBase):
         print "stop game"
 
     def ProcessInput(self, events, pressed_keys):
-        '''
-        if inpi:
-            stickx = inpi.getPotx()
-            sticky = inpi.getPoty()
-            if not stickx is False:
-                if stickx > 50.0:
-                    car.k_right = 0-int(round((stickx / 10.0)-5.0))
-                    car.k_left = 0
-                else:
-                    car.k_left = 0-int(round((stickx / 10.0)-5.0))
-                    car.k_right = 0
-
-            car.k_up = inpi.getB() *2
-            car.k_down = inpi.getA() * -2
-
-            if crash == True and inpi.getStart():
-                pygame.quit()
-                pygame.display.quit()
-
-                restart = subprocess.Popen([sys.executable, "carracing.py"])
-                restart.communicate()
-        '''
         for event in events:
-            if (event.type == TIMER1) and (self.crash == False):
-                self.time -= 1
-                self.car2.speed = 5
-                self.car2.direction = random.randint(0, 359)
-                self.car2.src_image = pygame.transform.rotate(self.car2.car_img, 0)
-	    if (event.type == BTNEVENT):
-		print "btn"+ event.btn
-		if event.btn == 'a':
-			self.car.k_up = 2
-		if event.btn == 'b':
-			self.car.k_down = -2
-            if not hasattr(event, 'key'): continue
-            down = event.type == KEYDOWN
-            if self.crash == False:
-                self.explosion_isPlayed = 0 
-                self.car.src_image = pygame.transform.rotate(self.car.car_img, 0) #reset rotation for car if drifted
-                if event.key == K_RIGHT:
-                    self.car.k_right = down * -5
-                    self.sfx['drive'].play()
-                elif event.key == K_LEFT:
-                    self.car.k_left = down * 5
-                    self.sfx['drive'].play()
-                elif event.key == K_UP:
-                    self.car.k_up = down * 2
-                    self.sfx['drive'].play()
-                elif event.key == K_DOWN:
-                    self.car.k_down = down * -2
-                    self.sfx['drive'].play()
-                elif event.key == K_SPACE: self.car.k_left = self.car.k_right = self.car.k_down = self.car.k_up = 0
-            elif self.crash == True and event.key == K_r:
-                print "restart"
-                self.SwitchToScene('title')
+            if self.crash == True:
+                if event.type == BTNEVENT:
+			if event.btn == 'start':
+                    		self.SwitchToScene('title')
+                if hasattr(event, 'key'):
+                    if event.key == K_r:
+                        self.SwitchToScene('title')
+            else:
+                if (event.type == TIMER1):
+                    self.time -= 1
+                    self.car2.speed = 5
+                    self.car2.direction = random.randint(0, 359)
+                    self.car2.src_image = pygame.transform.rotate(self.car2.car_img, 0)
+        	if (event.type == BTNEVENT):
+            		if event.btn == 'b':
+            			if event.edge == 'rising':
+            				self.car.k_up = 2
+            			else:
+            				self.car.k_up = 0
+            		if event.btn == 'a':
+            			if event.edge == 'rising':
+            				self.car.k_down = -2
+            			else:
+            				self.car.k_down = 0
+
+                if (event.type == STICKEVENT):
+            		if (event.axis == 0):
+            			if event.value > 50.0:
+            				self.car.k_right = 0-int(round((event.value / 10.0)-5.0))
+            				self.car.k_left = 0
+            			else:
+            				self.car.k_left = 0-int(round((event.value / 10.0)-5.0))
+            				self.car.k_right = 0 
+            			self.car.src_image = pygame.transform.rotate(self.car.car_img, 0)
+		
+                if not hasattr(event, 'key'): continue
+                down = event.type == KEYDOWN
+                if self.crash == False:
+                    self.explosion_isPlayed = 0 
+                    self.car.src_image = pygame.transform.rotate(self.car.car_img, 0) #reset rotation for car if drifted
+                    if event.key == K_RIGHT:
+                        self.car.k_right = down * -5
+                        self.sfx['drive'].play()
+                    elif event.key == K_LEFT:
+                        self.car.k_left = down * 5
+                        self.sfx['drive'].play()
+                    elif event.key == K_UP:
+                        self.car.k_up = down * 2
+                        self.sfx['drive'].play()
+                    elif event.key == K_DOWN:
+                        self.car.k_down = down * -2
+                        self.sfx['drive'].play()
+                    elif event.key == K_SPACE: self.car.k_left = self.car.k_right = self.car.k_down = self.car.k_up = 0
+
                 
     
     def Update(self):
-
-        for car in [self.car, self.car2]:
-
-
-            # CHECK IF CAR IS LEAVING SCREEN
-            if car.position[0] <90:
-                car.position = (self.width, car.position[1])
-            elif car.position[0] > self.width:
-                car.position = (90, car.position[1])
-            if car.position[1] <0:
-                car.position = (car.position[0], self.height)
-            elif car.position[1] > self.height:
-                car.position = (car.position[0], 0)
+        if self.crash == False:
+            for car in [self.car, self.car2]:
 
 
-            # CHECK COLLISIONS CAR/PADS
-            pads = pygame.sprite.spritecollide(car, self.pad_group, False)
-            if pads:
-                if (car.player == 0):
-                    self.lifeP1=self.lifeP1-10
-                elif (car.player == 1):
-                    self.lifeP2=self.lifeP2-10
-                self.sfx['hit'].play()
-                car.speed = -car.speed
+                # CHECK IF CAR IS LEAVING SCREEN
+                if car.position[0] <90:
+                    car.position = (self.width, car.position[1])
+                elif car.position[0] > self.width:
+                    car.position = (90, car.position[1])
+                if car.position[1] <0:
+                    car.position = (car.position[0], self.height)
+                elif car.position[1] > self.height:
+                    car.position = (car.position[0], 0)
 
 
-            # CHECK IF CAR HAS TAKEN BONUS
-            bonus = pygame.sprite.spritecollide(car, self.bonus_group, False)
-            if bonus:
-                car.speed = car.MAX_FORWARD_SPEED # Speed up car speed
-                self.sfx['speed'].play()
-                self.bonus_group.remove(bonus)
-                self.all_sprites_list.remove(bonus)
-
-            # CHECK IF CAR IS DRIFTING
-            grease = pygame.sprite.spritecollide(car, self.grease_group, False)
-            if grease:
-                car.src_image = pygame.transform.rotate(car.car_img, 45) # Drifting car
-                self.sfx['drift'].play()
-
-            # CHECK IF LIFE IS UP
-            life = pygame.sprite.spritecollide(car, self.life_group, False)
-            if life:
-                if car.player == 0:
-                    self.lifeP1=100 # Refill power bar
-                elif car.player ==1:
-                    self.lifeP2=100
-                self.sfx['energy'].play()
-                self.life_group.remove(life)
-                self.all_sprites_list.remove(life)
-                life = False
+                # CHECK COLLISIONS CAR/PADS
+                pads = pygame.sprite.spritecollide(car, self.pad_group, False)
+                if pads:
+                    if (car.player == 0):
+                        self.lifeP1=self.lifeP1-10
+                    elif (car.player == 1):
+                        self.lifeP2=self.lifeP2-10
+                    self.sfx['hit'].play()
+                    car.speed = -car.speed
 
 
-        if self.lifeP1 <= 0:        
-            self.car.src_image = self.car.car_hit
-            self.car.speed = 0
-            self.car.k_left = self.car.k_right = self.car.k_down = self.car.k_up = 0
-            self.car2.speed = 0
-            self.car2.k_left = self.car2.k_right = self.car2.k_down = self.car2.k_up = 0                
-            self.crash = True
+                # CHECK IF CAR HAS TAKEN BONUS
+                bonus = pygame.sprite.spritecollide(car, self.bonus_group, False)
+                if bonus:
+                    car.speed = car.MAX_FORWARD_SPEED # Speed up car speed
+                    self.sfx['speed'].play()
+                    self.bonus_group.remove(bonus)
+                    self.all_sprites_list.remove(bonus)
 
-        if self.lifeP2 <=0:
-            self.car.speed = 0
-            self.car.k_left = self.car.k_right = self.car.k_down = self.car.k_up = 0
-            self.car2.src_image = self.car2.car_hit
-            self.car2.speed = 0
-            self.car2.k_left = self.car2.k_right = self.car2.k_down = self.car2.k_up = 0
-            self.crash = True            
-            
-        # CHECK COLLISIONS CAR/CAR
-        enn = pygame.sprite.spritecollide(self.car, self.ennemies_group, False)
-        if enn:
-            #self.lifeP1=self.lifeP1-10
-            self.sfx['hit'].play()
-            #print self.car.direction
-            #print enn[0].direction
-            if self.lifeP1 != 0:
-                self.car.speed = -self.car.speed
-                self.car2.speed = -self.car2.speed
-                angleA = math.radians(self.car.direction)
-                angleB = math.radians(enn[0].direction)
-                angleNormal = math.atan2(self.car.position[1]-enn[0].position[1], self.car.position[0]-enn[0].position[0])
-                degatA = int(math.fabs(angleNormal-angleA)* 3.0)
-                degatB = int((2*math.pi - math.fabs(angleNormal-angleB))*3.0)
-                print "degatA %d" % degatA
-                print "degatB %d" % degatB
-                self.lifeP1=self.lifeP1-degatA
-                self.lifeP2=self.lifeP2-degatB
-                
-            else:
+                # CHECK IF CAR IS DRIFTING
+                grease = pygame.sprite.spritecollide(car, self.grease_group, False)
+                if grease:
+                    car.src_image = pygame.transform.rotate(car.car_img, 45) # Drifting car
+                    self.sfx['drift'].play()
+
+                # CHECK IF LIFE IS UP
+                life = pygame.sprite.spritecollide(car, self.life_group, False)
+                if life:
+                    if car.player == 0:
+                        self.lifeP1=100 # Refill power bar
+                    elif car.player ==1:
+                        self.lifeP2=100
+                    self.sfx['energy'].play()
+                    self.life_group.remove(life)
+                    self.all_sprites_list.remove(life)
+                    life = False
+
+
+            if self.lifeP1 <= 0:        
                 self.car.src_image = self.car.car_hit
                 self.car.speed = 0
                 self.car.k_left = self.car.k_right = self.car.k_down = self.car.k_up = 0
                 self.car2.speed = 0
                 self.car2.k_left = self.car2.k_right = self.car2.k_down = self.car2.k_up = 0                
                 self.crash = True
-          
 
-
-
+            if self.lifeP2 <=0:
+                self.car.speed = 0
+                self.car.k_left = self.car.k_right = self.car.k_down = self.car.k_up = 0
+                self.car2.src_image = self.car2.car_hit
+                self.car2.speed = 0
+                self.car2.k_left = self.car2.k_right = self.car2.k_down = self.car2.k_up = 0
+                self.crash = True            
+                
+            # CHECK COLLISIONS CAR/CAR
+            enn = pygame.sprite.spritecollide(self.car, self.ennemies_group, False)
+            if enn:
+                #self.lifeP1=self.lifeP1-10
+                self.sfx['hit'].play()
+                #print self.car.direction
+                #print enn[0].direction
+                if self.lifeP1 != 0:
+                    self.car.speed = -self.car.speed
+                    self.car2.speed = -self.car2.speed
+                    angleA = math.radians(self.car.direction)
+                    angleB = math.radians(enn[0].direction)
+                    angleNormal = math.atan2(self.car.position[1]-enn[0].position[1], self.car.position[0]-enn[0].position[0])
+                    degatA = int(math.fabs(angleNormal-angleA)* 3.0)
+                    degatB = int((2*math.pi - math.fabs(angleNormal-angleB))*3.0)
+                    print "degatA %d" % degatA
+                    print "degatB %d" % degatB
+                    self.lifeP1=self.lifeP1-degatA
+                    self.lifeP2=self.lifeP2-degatB
+                    
+                else:
+                    self.car.src_image = self.car.car_hit
+                    self.car.speed = 0
+                    self.car.k_left = self.car.k_right = self.car.k_down = self.car.k_up = 0
+                    self.car2.speed = 0
+                    self.car2.k_left = self.car2.k_right = self.car2.k_down = self.car2.k_up = 0                
+                    self.crash = True
+              
         # LIFE LEVEL TO 0
         if self.play_explosion_sound and self.explosion_isPlayed == 0:
             self.play_explosion_sound = False
@@ -390,8 +390,8 @@ class GameScene(SceneBase):
             pygame.draw.rect(self.screen,(0,255,0), (25, self.height-10, 10, -int(self.lifeP2/100.0*self.height/2)), 0)
 
         # display fps
-        fpstext = DisplayText(self.screen,"%d fps" % int(clock.get_fps()),self.basicfont,(255, 0, 0),25,0,5,10)
-        fpstext.render()
+        #fpstext = DisplayText(self.screen,"%d fps" % int(clock.get_fps()),self.basicfont,(255, 0, 0),25,0,5,10)
+        #fpstext.render()
 
         # display time
         if (self.time >= 0):

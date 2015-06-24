@@ -12,6 +12,20 @@ import globals
 STICKEVENT = USEREVENT+2
 BTNEVENT = USEREVENT+3
 
+btns_names = ['select', 'start', 'y', 'x', 'b', 'l', 'r', 'a', 'stick']
+btns_pins = [2, 3, 4, 14, 15, 17, 27, 22, 10]
+
+def btn_callback(channel):
+	global btns_names, btns_pins
+	edge = ''
+	if GPIO.input(channel):
+		edge = 'falling'
+	else:
+		edge = 'rising'
+        btnevent = pygame.event.Event(BTNEVENT, edge=edge, btn=btns_names[btns_pins.index(channel)])
+        pygame.event.post(btnevent)
+
+
 class inputpi:
 	# change these as desired - they're the pins connected from the
 	# SPI port on the ADC to the Cobbler
@@ -41,6 +55,8 @@ class inputpi:
 
 		for i in self.btns_pins:
 			GPIO.setup(i, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+			GPIO.add_event_detect(i, GPIO.BOTH, callback=btn_callback)
+		
 		# set up the SPI interface pins
 		GPIO.setup(self.SPIMOSI, GPIO.OUT)
 		GPIO.setup(self.SPIMISO, GPIO.IN)
@@ -135,7 +151,3 @@ class inputpi:
 		if not sticky is False:
 			stickyevent = pygame.event.Event(STICKEVENT, axis=1, value=sticky)
 			pygame.event.post(stickyevent)
-		for i,val in enumerate(self.btns_pins):
-			if not GPIO.input(val):
-				btnevent = pygame.event.Event(BTNEVENT, btn=self.btns_names[i])
-				pygame.event.post(btnevent)
