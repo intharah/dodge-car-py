@@ -181,7 +181,7 @@ class GameScene(SceneBase):
         for i in self.all_sprites_list.sprites():
             i.reset()
             
-        self.car2.reset()
+
             
         if my_car_num == 0:
             rect = self.screen.get_rect().center
@@ -228,6 +228,9 @@ class GameScene(SceneBase):
         for event in events:
             if (event.type == TIMER1) and (self.crash == False):
                 self.time -= 1
+                self.car2.speed = 5
+                self.car2.direction = random.randint(0, 359)
+                self.car2.src_image = pygame.transform.rotate(self.car2.car_img, 0)
             if not hasattr(event, 'key'): continue
             down = event.type == KEYDOWN
             if self.crash == False:
@@ -252,32 +255,66 @@ class GameScene(SceneBase):
                 
     
     def Update(self):
-        if self.time == 0:
-            print "TIME OVER"
-        # CHECK IF CAR IS LEAVING SCREEN
-        if self.car.position[0] <90:
-            self.car.position = (self.width, self.car.position[1])
-        elif self.car.position[0] > self.width:
-            self.car.position = (90, self.car.position[1])
-        if self.car.position[1] <0:
-            self.car.position = (self.car.position[0], self.height)
-        elif self.car.position[1] > self.height:
-            self.car.position = (self.car.position[0], 0)
 
-        # CHECK COLLISIONS CAR/PADS
-        pads = pygame.sprite.spritecollide(self.car, self.pad_group, False)
-        if pads:
-            self.lifeP1=self.lifeP1-10
-            self.sfx['hit'].play()
-            if self.lifeP1 >= 0:
-                self.car.speed = -self.car.speed
-            else:
-                self.car.src_image = self.car.car_hit
-                self.car.speed = 0
-                self.car.k_left = self.car.k_right = self.car.k_down = self.car.k_up = 0
-                self.car2.speed = 0
-                self.car2.k_left = self.car2.k_right = self.car2.k_down = self.car2.k_up = 0                
-                self.crash = True
+        for car in [self.car, self.car2]:
+
+
+            # CHECK IF CAR IS LEAVING SCREEN
+            if car.position[0] <90:
+                car.position = (self.width, car.position[1])
+            elif car.position[0] > self.width:
+                car.position = (90, car.position[1])
+            if car.position[1] <0:
+                car.position = (car.position[0], self.height)
+            elif car.position[1] > self.height:
+                car.position = (car.position[0], 0)
+
+
+            # CHECK COLLISIONS CAR/PADS
+            pads = pygame.sprite.spritecollide(car, self.pad_group, False)
+            if pads:
+                if (car.player == 0):
+                    self.lifeP1=self.lifeP1-10
+                elif (car.player == 1):
+                    self.lifeP2=self.lifeP2-10
+                self.sfx['hit'].play()
+                car.speed = -car.speed
+
+
+            # CHECK IF CAR HAS TAKEN BONUS
+            bonus = pygame.sprite.spritecollide(car, self.bonus_group, False)
+            if bonus:
+                car.speed = car.MAX_FORWARD_SPEED # Speed up car speed
+                self.sfx['speed'].play()
+                self.bonus_group.remove(bonus)
+                self.all_sprites_list.remove(bonus)
+
+            # CHECK IF CAR IS DRIFTING
+            grease = pygame.sprite.spritecollide(car, self.grease_group, False)
+            if grease:
+                car.src_image = pygame.transform.rotate(car.car_img, 45) # Drifting car
+                self.sfx['drift'].play()
+
+            # CHECK IF LIFE IS UP
+            life = pygame.sprite.spritecollide(car, self.life_group, False)
+            if life:
+                if car.player == 0:
+                    self.lifeP1=100 # Refill power bar
+                elif car.player ==1:
+                    self.lifeP2=100
+                self.sfx['energy'].play()
+                self.life_group.remove(life)
+                self.all_sprites_list.remove(life)
+                life = False
+
+
+        if self.lifeP1 <= 0:        
+            self.car.src_image = self.car.car_hit
+            self.car.speed = 0
+            self.car.k_left = self.car.k_right = self.car.k_down = self.car.k_up = 0
+            self.car2.speed = 0
+            self.car2.k_left = self.car2.k_right = self.car2.k_down = self.car2.k_up = 0                
+            self.crash = True
 
         if self.lifeP2 <=0:
             self.car.speed = 0
@@ -285,7 +322,6 @@ class GameScene(SceneBase):
             self.car2.src_image = self.car2.car_hit
             self.car2.speed = 0
             self.car2.k_left = self.car2.k_right = self.car2.k_down = self.car2.k_up = 0
-            
             self.crash = True            
             
         # CHECK COLLISIONS CAR/CAR
@@ -297,6 +333,7 @@ class GameScene(SceneBase):
             #print enn[0].direction
             if self.lifeP1 != 0:
                 self.car.speed = -self.car.speed
+                self.car2.speed = -self.car2.speed
                 angleA = math.radians(self.car.direction)
                 angleB = math.radians(enn[0].direction)
                 angleNormal = math.atan2(self.car.position[1]-enn[0].position[1], self.car.position[0]-enn[0].position[0])
@@ -316,28 +353,7 @@ class GameScene(SceneBase):
                 self.crash = True
           
 
-        # CHECK IF CAR HAS TAKEN BONUS
-        bonus = pygame.sprite.spritecollide(self.car, self.bonus_group, False)
-        if bonus:
-            self.car.speed = self.car.MAX_FORWARD_SPEED # Speed up car speed
-            self.sfx['speed'].play()
-            self.bonus_group.remove(bonus)
-            self.all_sprites_list.remove(bonus)
 
-        # CHECK IF CAR IS DRIFTING
-        grease = pygame.sprite.spritecollide(self.car, self.grease_group, False)
-        if grease:
-            self.car.src_image = pygame.transform.rotate(self.car.car_img, 45) # Drifting car
-            self.sfx['drift'].play()
-
-        # CHECK IF LIFE IS UP
-        life = pygame.sprite.spritecollide(self.car, self.life_group, False)
-        if life:
-            self.lifeP1=100 # Refill power bar
-            self.sfx['energy'].play()
-            self.life_group.remove(life)
-            self.all_sprites_list.remove(life)
-            life = False
 
         # LIFE LEVEL TO 0
         if self.play_explosion_sound and self.explosion_isPlayed == 0:

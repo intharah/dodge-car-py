@@ -80,6 +80,7 @@ class TitleScene(SceneBase):
     
     def Render(self, screen, clock, deltat):
         background_img = pygame.image.load("game_logo.png").convert()
+        screen.fill((0,0,0))
         screen.blit(background_img,(180,0))
         if self.blink > 0:
             if not self.p1ready:
