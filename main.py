@@ -4,6 +4,7 @@ from pygame.locals import *
 from pyscope import pyscope
 from SceneBase import *
 from title import *
+from carracing import *
 from globals import *
 
 #load Settings
@@ -35,6 +36,8 @@ drift.set_volume(0.2)
 play_explosion_sound = False
 explosion_isPlayed = 0
 
+
+pygame.mouse.set_visible(False)
 width = 640
 height = 480
 fps = 30
@@ -44,7 +47,7 @@ pygame.time.set_timer(TIMER1, 1000)
 
 inpi = False
 
-
+screen = None
 if (sys.platform == "darwin") or (sys.platform == "win32") or (not os.uname()[4].startswith("arm")):
     screen = pygame.display.set_mode((width, height))
 else:
@@ -61,4 +64,6 @@ if not pygame.display.get_init():
 if not pygame.font.get_init():
     pygame.font.init()
 
-run_game(pygame, screen, inpi, settings, width, height, sfx, fps, TitleScene(screen, inpi, settings, width, height, sfx))
+scenes['title'] = TitleScene(screen, inpi, settings, width, height, sfx)
+scenes['game'] = GameScene(screen, inpi, settings, width, height, sfx)
+run_game(pygame, screen, inpi, settings, width, height, sfx, fps, 'title')

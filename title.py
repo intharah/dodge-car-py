@@ -3,7 +3,7 @@ from pygame.locals import *
 from pyscope import pyscope
 from SceneBase import *
 from Displaytext import DisplayText
-from carracing import *
+from globals import *
 
 
 class TitleScene(SceneBase):
@@ -13,6 +13,16 @@ class TitleScene(SceneBase):
         self.font = pygame.font.Font('data/coders_crux/coders_crux.ttf', 40)
         pygame.time.set_timer(TIMER2, 1000)
         self.blink = 30
+        self.p1ready = False
+        self.p2ready = False
+
+    def Start(self):
+        print "start title"
+        self.p1ready = False
+        self.p2ready = False        
+            
+    def Stop(self):
+        print "stop title"
         self.p1ready = False
         self.p2ready = False
 
@@ -44,7 +54,7 @@ class TitleScene(SceneBase):
                 if event.key == K_RETURN:
                     self.p1ready = True
                         # launch game
-                    self.SwitchToScene(GameScene(self.screen, self.inputpi, self.settings, self.width, self.height, self.sfx))
+                    self.SwitchToScene('game')
                 if event.key == K_ESCAPE:
                     pygame.quit()
                     sys.exit()

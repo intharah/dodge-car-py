@@ -1,5 +1,8 @@
 import pygame
 
+scenes = {}
+active_scene = None
+
 class SceneBase:
     def __init__(self, screen, inputpi, settings, width, height, sfx):
         self.next = self
@@ -10,6 +13,10 @@ class SceneBase:
         self.height = height
         self.sfx = sfx
     
+    def Start(self):
+        print("uh-oh, you didn't override this in the child class")    
+    def Stop(self):
+        print("uh-oh, you didn't override this in the child class")    
     def ProcessInput(self, events, pressed_keys):
         print("uh-oh, you didn't override this in the child class")
 
@@ -20,18 +27,23 @@ class SceneBase:
         print("uh-oh, you didn't override this in the child class")
 
     def SwitchToScene(self, next_scene):
+        global active_scene
         print "switchtoscene"
-        self.next = next_scene
-
+        self.Stop()
+        active_scene = scenes[next_scene]
+        self.next.Start()
 
     
     def Terminate(self):
         self.SwitchToScene(None)
 
 def run_game(pygame, screen, inputpi, settings, width, height, sfx, fps, starting_scene):
+    global active_scene
+    
     clock = pygame.time.Clock()
 
-    active_scene = starting_scene
+    active_scene = scenes[starting_scene]
+    active_scene.Start()
 
     while active_scene != None:
         deltat = clock.tick(fps)
@@ -58,5 +70,5 @@ def run_game(pygame, screen, inputpi, settings, width, height, sfx, fps, startin
         active_scene.Update()
         active_scene.Render(screen, clock, deltat)
         
-        active_scene = active_scene.next
+        #active_scene = active_scene.next
         pygame.display.flip()
