@@ -231,6 +231,12 @@ class GameScene(SceneBase):
                 self.car2.speed = 5
                 self.car2.direction = random.randint(0, 359)
                 self.car2.src_image = pygame.transform.rotate(self.car2.car_img, 0)
+	    if (event.type == BTNEVENT):
+		print "btn"+ event.btn
+		if event.btn == 'a':
+			self.car.k_up = 2
+		if event.btn == 'b':
+			self.car.k_down = -2
             if not hasattr(event, 'key'): continue
             down = event.type == KEYDOWN
             if self.crash == False:

@@ -51,7 +51,7 @@ class TitleScene(SceneBase):
         '''
         for event in events:
             if event.type == BTNEVENT:
-                self.SwitchToScene(GameScene(self.screen, self.inputpi, self.settings, self.width, self.height, self.sfx))
+                self.SwitchToScene('game')
             if event.type == TIMER2:
                 self.blink = 15
             if event.type == KEYDOWN:

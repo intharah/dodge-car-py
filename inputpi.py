@@ -3,10 +3,14 @@
 # Written by Limor "Ladyada" Fried for Adafruit Industries, (c) 2015
 # This code is released into the public domain
 
-import time
+import time,pygame
+from pygame.locals import *
 import os
 import RPi.GPIO as GPIO
+import globals
 
+STICKEVENT = USEREVENT+2
+BTNEVENT = USEREVENT+3
 
 class inputpi:
 	# change these as desired - they're the pins connected from the
@@ -29,21 +33,14 @@ class inputpi:
 	DEBUG = 0
 
 	def __init__(self):	
-		btns_names = ['select', 'start', 'y', 'x', 'b', 'l', 'r', 'a', 'stick']
-		btns_pins = [2, 3, 4, 14, 15, 17, 27, 22, 10]
+		self.btns_names = ['select', 'start', 'y', 'x', 'b', 'l', 'r', 'a', 'stick']
+		self.btns_pins = [2, 3, 4, 14, 15, 17, 27, 22, 10]
 
 		GPIO.setwarnings(False)
 		GPIO.setmode(GPIO.BCM)
 
-		GPIO.setup(self.bselect, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-		GPIO.setup(self.bstart, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-		GPIO.setup(self.by, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-		GPIO.setup(self.bx, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-		GPIO.setup(self.bb, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-		GPIO.setup(self.bl, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-		GPIO.setup(self.br, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-		GPIO.setup(self.ba, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-		GPIO.setup(self.bstick, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+		for i in self.btns_pins:
+			GPIO.setup(i, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 		# set up the SPI interface pins
 		GPIO.setup(self.SPIMOSI, GPIO.OUT)
 		GPIO.setup(self.SPIMISO, GPIO.IN)
@@ -128,6 +125,8 @@ class inputpi:
 
 
 	def sendEvents(self):
+		global STICKEVENT
+		global BTNEVENT
 		stickx = self.getPotx()
 		sticky = self.getPoty()
 		if not stickx is False:
@@ -136,7 +135,7 @@ class inputpi:
 		if not sticky is False:
 			stickyevent = pygame.event.Event(STICKEVENT, axis=1, value=sticky)
 			pygame.event.post(stickyevent)
-		for i in btns_names:
-			if not GPIO.input(i):
-				btnevent = pygame.event.Event(BTNEVENT, btn=btns_pins[i])
-
+		for i,val in enumerate(self.btns_pins):
+			if not GPIO.input(val):
+				btnevent = pygame.event.Event(BTNEVENT, btn=self.btns_names[i])
+				pygame.event.post(btnevent)
