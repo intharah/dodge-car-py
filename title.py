@@ -7,11 +7,12 @@ from globals import *
 
 
 class TitleScene(SceneBase):
-    def __init__(self, screen, inputpi, settings, width, height, sfx):
-        SceneBase.__init__(self, screen, inputpi, settings, width, height, sfx)
+    def __init__(self, screen, inputpi, settings, width, height, sfx, net):
+        SceneBase.__init__(self, screen, inputpi, settings, width, height, sfx, net)
         pygame.font.init()
         self.font = pygame.font.Font('data/coders_crux/coders_crux.ttf', 40)
         pygame.time.set_timer(TIMER2, 1000)
+        self.my_car = int(self.settings.get("General", "player"))
         self.blink = 30
         self.p1ready = False
         self.p2ready = False
@@ -28,6 +29,9 @@ class TitleScene(SceneBase):
 
     
     def ProcessInput(self, events, pressed_keys):
+        #netmsg = self.net.recv()
+        #if netmsg:
+        #    print netmsg
         '''if inpi:
             sticky = inpi.getPoty()
             if not sticky is False:
@@ -52,9 +56,17 @@ class TitleScene(SceneBase):
                 self.blink = 15
             if event.type == KEYDOWN:
                 if event.key == K_RETURN:
-                    self.p1ready = True
+                    '''
+                    if (self.my_car == 0):
+                        self.p1ready = True
+                        self.net.send('0:ready')
+                    else: 
+                        self.p2ready = True
+                        self.net.send('1:ready')
                         # launch game
+                    '''
                     self.SwitchToScene('game')
+                    
                 if event.key == K_ESCAPE:
                     pygame.quit()
                     sys.exit()
@@ -73,15 +85,18 @@ class TitleScene(SceneBase):
             if not self.p1ready:
                 p1text = DisplayText(screen,"Press Start",self.font,(255, 255, 255),320,200,0,0)
                 p1text.render()
+        '''
             if not self.p2ready:
                 p1text = DisplayText(screen,"Press Start",self.font,(255, 255, 255),320,250,0,0)
                 p1text.render()
+        '''
         if self.p1ready:
             p1text = DisplayText(screen,"Ready!",self.font,(255, 255, 255),320,200,0,0)
             p1text.render()
+        '''
         if self.p2ready:
             p2text = DisplayText(screen,"Ready!",self.font,(255, 255, 255),320,250,0,0)
             p2text.render()
-
+        '''
 
 

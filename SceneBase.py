@@ -4,7 +4,7 @@ scenes = {}
 active_scene = None
 
 class SceneBase:
-    def __init__(self, screen, inputpi, settings, width, height, sfx):
+    def __init__(self, screen, inputpi, settings, width, height, sfx, net):
         self.next = self
         self.settings = settings
         self.inputpi = inputpi
@@ -12,6 +12,7 @@ class SceneBase:
         self.width = width
         self.height = height
         self.sfx = sfx
+        self.net = net
     
     def Start(self):
         print("uh-oh, you didn't override this in the child class")    
@@ -33,7 +34,6 @@ class SceneBase:
         active_scene = scenes[next_scene]
         self.next.Start()
 
-    
     def Terminate(self):
         self.SwitchToScene(None)
 

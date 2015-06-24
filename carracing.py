@@ -90,8 +90,8 @@ class CarSprite(pygame.sprite.Sprite):
         
 
 class GameScene(SceneBase):
-    def __init__(self, screen, inputpi, settings, width, height, sfx):
-        SceneBase.__init__(self, screen, inputpi, settings, width, height, sfx)
+    def __init__(self, screen, inputpi, settings, width, height, sfx, net):
+        SceneBase.__init__(self, screen, inputpi, settings, width, height, sfx, net)
         self.lifeP1 = 100
         self.lifeP2 = 100
 
@@ -138,7 +138,7 @@ class GameScene(SceneBase):
         if my_car_num == 0:
             rect = self.screen.get_rect().center
         else:
-            rect = (rect.center[0] -50, rect.center[1])
+            rect = (self.screen.get_rect().center[0] -50, self.screen.get_rect().center[1])
         self.car = CarSprite(rect, my_car_num)
         self.car_group = pygame.sprite.RenderPlain(self.car)
         self.all_sprites_list.add(self.car_group)
@@ -279,16 +279,28 @@ class GameScene(SceneBase):
         # CHECK COLLISIONS CAR/CAR
         enn = pygame.sprite.spritecollide(self.car, self.ennemies_group, False)
         if enn:
-            self.lifeP1=self.lifeP1-10
+            #self.lifeP1=self.lifeP1-10
             self.sfx['hit'].play()
             #print self.car.direction
             #print enn[0].direction
             if self.lifeP1 != 0:
                 self.car.speed = -self.car.speed
+                angleA = math.radians(self.car.direction)
+                angleB = math.radians(enn[0].direction)
+                angleNormal = math.atan2(self.car.position[1]-enn[0].position[1], self.car.position[0]-enn[0].position[0])
+                degatA = int(math.fabs(angleNormal-angleA)* 3.0)
+                degatB = int((2*math.pi - math.fabs(angleNormal-angleB))*3.0)
+                print "degatA %d" % degatA
+                print "degatB %d" % degatB
+                self.lifeP1=self.lifeP1-degatA
+                self.lifeP2=self.lifeP2-degatB
+                
             else:
                 self.car.src_image = self.car.car_hit
                 self.car.speed = 0
                 self.car.k_left = self.car.k_right = self.car.k_down = self.car.k_up = 0
+                self.crash = True
+            if self.lifeP2 <=0:
                 self.crash = True            
 
         # CHECK IF CAR HAS TAKEN BONUS
@@ -350,6 +362,9 @@ class GameScene(SceneBase):
         if (self.time >= 0):
             timetext = DisplayText(self.screen,"%d" % self.time,self.bigfont,(255, 255, 255),27,0,5,50)
             timetext.render()
+        
+        if self.time <= 0:
+            self.crash = True
 
         self.car_group.update(deltat)
         self.ennemies_group.update(deltat)
@@ -362,8 +377,18 @@ class GameScene(SceneBase):
             self.sfx['hit'].stop()
             self.play_explosion_sound = True
             pygame.mixer.music.set_volume(0.7)
+            message = ""
+            if (self.time <= 0):
+                message = "Time over!"
+            elif (self.lifeP1 >0 and self.lifeP2 <=0):
+                message = "You win!"
+            elif (self.lifeP1 <= 0 and self.lifeP2 >0):
+                message = "You lose!"
+            elif self.lifeP1 == 0 and self.lifeP2 ==0:
+                message = "Draw game!"
+                
             # Display Game Over
-            gameovertext = DisplayText(self.screen,"Game Over",self.bigfont,(255, 0, 0),self.width/2,self.height/2,5,-10)
+            gameovertext = DisplayText(self.screen,message,self.bigfont,(255, 0, 0),self.width/2,self.height/2,5,-10)
             gameovertext.render()
             # Display Restart (R-key for PC/MAC users)
             restarttext = DisplayText(self.screen,"Press Start to play again",self.mediumfont,(255, 0, 0),self.width/2,self.height/2,5,30)

@@ -45,6 +45,9 @@ fps = 30
 pygame.time.set_timer(TIMER1, 1000)
 
 
+net = False
+
+
 inpi = False
 
 screen = None
@@ -64,6 +67,6 @@ if not pygame.display.get_init():
 if not pygame.font.get_init():
     pygame.font.init()
 
-scenes['title'] = TitleScene(screen, inpi, settings, width, height, sfx)
-scenes['game'] = GameScene(screen, inpi, settings, width, height, sfx)
+scenes['title'] = TitleScene(screen, inpi, settings, width, height, sfx, net)
+scenes['game'] = GameScene(screen, inpi, settings, width, height, sfx, net)
 run_game(pygame, screen, inpi, settings, width, height, sfx, fps, 'title')
