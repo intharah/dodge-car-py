@@ -261,8 +261,6 @@ class GameScene(SceneBase):
                         self.sfx['drive'].play()
                     elif event.key == K_SPACE: self.car.k_left = self.car.k_right = self.car.k_down = self.car.k_up = 0
 
-                
-    
     def Update(self):
         if self.crash == False:
             for car in [self.car, self.car2]:
